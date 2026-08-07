@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="pageTitle">推し活チェキ帳 [Cheki Book V1.2]</title>
+  <title id="pageTitle">推し活チェキ帳 [Cheki Book V1.3]</title>
   
   <style>
     /* 🎨 CSS変数：テーマ10種類のカラー定義 */
@@ -42,10 +42,8 @@
       --light-text: #9a9aab;
       --border-color: #2e2e3d;
       --shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-
       --badge-bg: #3a2233;
       --badge-color: #ff6b8b;
-
       --gold-bg-start: #2e2612;
       --gold-bg-end: #1f190a;
       --gold-border: #d4af37;
@@ -63,10 +61,8 @@
       --light-text: #888888;
       --border-color: #2a2a2a;
       --shadow: 0 4px 15px rgba(0,0,0,0.7);
-
       --badge-bg: #3a0d25;
       --badge-color: #ff3399;
-
       --gold-bg-start: #262000;
       --gold-bg-end: #141100;
       --gold-border: #ffd700;
@@ -84,10 +80,8 @@
       --light-text: #a38c99;
       --border-color: #3b2937;
       --shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-
       --badge-bg: #402035;
       --badge-color: #ff80b3;
-
       --gold-bg-start: #332615;
       --gold-bg-end: #21180d;
       --gold-border: #c9a050;
@@ -105,10 +99,8 @@
       --light-text: #698396;
       --border-color: #1f2545;
       --shadow: 0 4px 20px rgba(0, 240, 255, 0.15);
-
       --badge-bg: #102a45;
       --badge-color: #00f0ff;
-
       --gold-bg-start: #1f1b00;
       --gold-bg-end: #0f0d00;
       --gold-border: #ffe600;
@@ -126,10 +118,8 @@
       --light-text: #9e8e87;
       --border-color: #3d332e;
       --shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-
       --badge-bg: #423028;
       --badge-color: #e8a992;
-
       --gold-bg-start: #33291a;
       --gold-bg-end: #211a10;
       --gold-border: #d1a153;
@@ -147,10 +137,8 @@
       --light-text: #829a92;
       --border-color: #d3f9ed;
       --shadow: 0 4px 15px rgba(12, 166, 120, 0.08);
-
       --badge-bg: var(--soft-pink);
       --badge-color: var(--accent-pink);
-
       --gold-bg-start: #fff9e6;
       --gold-bg-end: #fff0c2;
       --gold-border: #f3c642;
@@ -168,10 +156,8 @@
       --light-text: #998c6d;
       --border-color: #f5e8c4;
       --shadow: 0 4px 15px rgba(212, 175, 55, 0.12);
-
       --badge-bg: var(--soft-pink);
       --badge-color: var(--accent-pink);
-
       --gold-bg-start: #fff5cc;
       --gold-bg-end: #ffe680;
       --gold-border: #d4af37;
@@ -189,10 +175,8 @@
       --light-text: #8c829e;
       --border-color: #e5dbff;
       --shadow: 0 4px 15px rgba(132, 94, 247, 0.1);
-
       --badge-bg: var(--soft-pink);
       --badge-color: var(--accent-pink);
-
       --gold-bg-start: #fff9e6;
       --gold-bg-end: #fff0c2;
       --gold-border: #f3c642;
@@ -210,10 +194,8 @@
       --light-text: #9c8978;
       --border-color: #ffe8cc;
       --shadow: 0 4px 15px rgba(247, 103, 7, 0.08);
-
       --badge-bg: var(--soft-pink);
       --badge-color: var(--accent-pink);
-
       --gold-bg-start: #fff9e6;
       --gold-bg-end: #fff0c2;
       --gold-border: #f3c642;
@@ -500,7 +482,7 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       border: 1px solid var(--border-color);
-      border-left: 6px solid var(--primary-pink); /* 担当カラーがここに反映されます */
+      border-left: 6px solid var(--primary-pink);
       overflow: hidden;
       transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
@@ -609,6 +591,11 @@
       border-radius: 10px;
       font-size: 0.75rem;
       border: 1px solid rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+    }
+
+    .badge-count:hover {
+      opacity: 0.8;
     }
 
     .card-body {
@@ -683,7 +670,7 @@
       gap: 4px;
     }
 
-    .link-btn, .copy-btn, .letter-btn {
+    .link-btn, .copy-btn, .letter-btn, .photo-gallery-btn {
       font-size: 0.7rem;
       padding: 3px 8px;
       border-radius: 10px;
@@ -695,13 +682,18 @@
       transition: transform 0.1s;
     }
 
-    .link-btn:active, .copy-btn:active, .letter-btn:active {
+    .link-btn:active, .copy-btn:active, .letter-btn:active, .photo-gallery-btn:active {
       transform: scale(0.95);
     }
 
     .letter-btn {
       background: var(--soft-pink);
       border-color: var(--primary-pink);
+      font-weight: bold;
+    }
+
+    .photo-gallery-btn {
+      background: linear-gradient(135deg, var(--soft-pink), var(--card-bg));
       font-weight: bold;
     }
 
@@ -935,6 +927,79 @@
       color: var(--accent-pink);
       margin-bottom: 12px;
       font-size: 1.15rem;
+    }
+
+    /* 📸 インスタ風3x3グリッドギャラリー用モーダル */
+    .gallery-modal-content {
+      max-width: 500px;
+      width: 95%;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cheki-grid-3x3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      max-height: 60vh;
+      overflow-y: auto;
+      padding: 4px;
+      margin: 10px 0;
+    }
+
+    .cheki-grid-item {
+      aspect-ratio: 3/4;
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.1s;
+    }
+
+    .cheki-grid-item:active {
+      transform: scale(0.95);
+    }
+
+    .cheki-grid-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .cheki-grid-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      color: var(--light-text);
+      padding: 4px;
+      text-align: center;
+      background: var(--soft-pink);
+    }
+
+    /* フルスクリーン画像プレビュー用モーダル */
+    .fullscreen-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      cursor: zoom-out;
+    }
+
+    .fullscreen-overlay img {
+      max-width: 95%;
+      max-height: 90vh;
+      border-radius: 8px;
+      object-fit: contain;
     }
 
     .share-option-group {
@@ -1300,11 +1365,31 @@
 
   <button class="fab-add" onclick="openAddModal()" title="新しいチェキ・ライブ記録を追加">＋</button>
 
+  <!-- 📸 インスタ風3x3グリッドギャラリーモーダル -->
+  <div class="modal-overlay" id="chekiGalleryModal">
+    <div class="modal-content gallery-modal-content">
+      <h3 id="galleryModalTitle">🖼️ チェキ一覧 (3x3)</h3>
+      <p style="font-size:0.75rem; color:var(--light-text); margin-bottom:4px;">タップするとフルスクリーンで拡大できます</p>
+      
+      <div class="cheki-grid-3x3" id="chekiGalleryGrid">
+        <!-- JSで動的生成 -->
+      </div>
+
+      <button class="close-btn" onclick="closeModal('chekiGalleryModal')" style="width:100%; margin-top:8px;">閉じる</button>
+    </div>
+  </div>
+
+  <!-- 🔍 フルスクリーン画像プレビュー -->
+  <div class="fullscreen-overlay" id="fullscreenOverlay" onclick="closeFullscreen()">
+    <img id="fullscreenImg" src="" alt="フルスクリーンチェキ">
+  </div>
+
+  <!-- 既存のモーダル群 -->
   <div class="modal-overlay" id="whatsNewModal">
     <div class="modal-content">
       <h3>🎉 推し活チェキ図鑑へようこそ！</h3>
       <p style="font-size:0.75rem; color:var(--light-text); margin-bottom:8px;">
-        カテゴリ別（アイドル/コンカフェ/その他）や担当カラーによるカードの個別色分けに対応しました！
+        枚数バッジをタップするとインスタ風3x3グリッドのチェキ一覧が見られるようになりました！
       </p>
       <button class="close-btn" onclick="closeWhatsNewModal()" style="width:100%; margin-top:4px;">はじめる</button>
     </div>
@@ -1316,31 +1401,17 @@
       <p style="font-size:0.8rem; color:var(--light-text); margin-bottom:8px;">
         「<strong id="exportModalCastName" style="color:var(--accent-pink);">---</strong>」さんのチェキデータを友達に送信します。
       </p>
-
       <div class="share-option-group">
         <div style="font-size:0.75rem; font-weight:bold; color:var(--accent-pink); margin-bottom:2px;">共有する項目:</div>
-        <label class="share-option-label">
-          <input type="checkbox" id="chkIncludeInfo" checked onchange="updateExportFileName()"> 推しメン基本情報
-        </label>
-        <label class="share-option-label">
-          <input type="checkbox" id="chkIncludeVisits" checked onchange="updateExportFileName()"> チェキ撮影・イベント履歴
-        </label>
-        <label class="share-option-label">
-          <input type="checkbox" id="chkIncludeLetters" checked onchange="updateExportFileName()"> チェキ裏面メッセージ画像
-        </label>
+        <label class="share-option-label"><input type="checkbox" id="chkIncludeInfo" checked onchange="updateExportFileName()"> 推しメン基本情報</label>
+        <label class="share-option-label"><input type="checkbox" id="chkIncludeVisits" checked onchange="updateExportFileName()"> チェキ撮影・イベント履歴</label>
+        <label class="share-option-label"><input type="checkbox" id="chkIncludeLetters" checked onchange="updateExportFileName()"> チェキ裏面メッセージ画像</label>
       </div>
-
       <div class="step-box">
         <strong>STEP 1:</strong> ボタンを押して共有ファイルをダウンロード。<br>
-        <div style="text-align:center; margin-top:4px;">
-          <span class="file-name-highlight" id="exportModalFileName">共有_...json</span>
-        </div>
+        <div style="text-align:center; margin-top:4px;"><span class="file-name-highlight" id="exportModalFileName">共有_...json</span></div>
       </div>
-
-      <div class="step-box">
-        <strong>STEP 2:</strong> LINEやDiscord等で友達に送信！
-      </div>
-
+      <div class="step-box"><strong>STEP 2:</strong> LINEやDiscord等で友達に送信！</div>
       <div style="display:flex; flex-direction:column; gap:6px; margin-top:10px;">
         <button class="close-btn" onclick="executeCastDownload()" style="width:100%; margin-top:0;">💾 ファイルをダウンロード</button>
         <button class="close-btn" onclick="closeModal('exportCastModal')" style="background:#888; width:100%; margin-top:0;">キャンセル</button>
@@ -1351,27 +1422,17 @@
   <div class="modal-overlay" id="settingsModal">
     <div class="modal-content">
       <h3>⚙️ アプリ設定</h3>
-
       <details class="settings-acc-card" open>
-        <summary class="settings-acc-summary">
-          <span>👤 ユーザー名の変更</span>
-          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
-        </summary>
+        <summary class="settings-acc-summary"><span>👤 ユーザー名の変更</span><span class="arrow-icon" style="font-size:0.65rem;">▼</span></summary>
         <div class="settings-acc-body">
           <form class="add-form" onsubmit="saveUserName(event)">
-            <div class="form-group">
-              <input type="text" id="inputUserName" placeholder="お名前を入力..." required>
-            </div>
+            <div class="form-group"><input type="text" id="inputUserName" placeholder="お名前を入力..." required></div>
             <button type="submit" class="close-btn" style="margin-top:4px; padding:6px; font-size:0.8rem; width:100%;">保存する</button>
           </form>
         </div>
       </details>
-
       <details class="settings-acc-card" open>
-        <summary class="settings-acc-summary">
-          <span>🎨 カラーテーマの着せ替え</span>
-          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
-        </summary>
+        <summary class="settings-acc-summary"><span>🎨 カラーテーマの着せ替え</span><span class="arrow-icon" style="font-size:0.65rem;">▼</span></summary>
         <div class="settings-acc-body">
           <div class="theme-grid">
             <button class="theme-item-btn" id="btnThemeDefault" onclick="setTheme('default')">🌸 ぴんく</button>
@@ -1387,12 +1448,8 @@
           </div>
         </div>
       </details>
-
       <details class="settings-acc-card">
-        <summary class="settings-acc-summary">
-          <span>📂 バックアップ & データ管理</span>
-          <span class="arrow-icon" style="font-size:0.65rem;">▼</span>
-        </summary>
+        <summary class="settings-acc-summary"><span>📂 バックアップ & データ管理</span><span class="arrow-icon" style="font-size:0.65rem;">▼</span></summary>
         <div class="settings-acc-body">
           <p style="font-size:0.7rem; color:var(--light-text); margin-bottom:6px;">全データをバックアップ・復元できます。</p>
           <button class="close-btn" style="width:100%; margin-top:0; font-size:0.75rem; padding:6px; background:linear-gradient(135deg, #4dabf7, #339af0);" onclick="exportJSONFile()">💾 JSONダウンロード</button>
@@ -1400,7 +1457,6 @@
           <input type="file" id="jsonFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importJSONFile(event)">
         </div>
       </details>
-
       <button class="close-btn" onclick="closeModal('settingsModal')" style="width:100%; margin-top:10px;">閉じる</button>
     </div>
   </div>
@@ -1409,14 +1465,12 @@
     <div class="modal-content">
       <h3>📂 共有データの読み込み</h3>
       <p style="font-size:0.75rem; color:var(--light-text); margin-bottom:10px;">友達から受け取った共有ファイル（.json）を選択してください。</p>
-      
       <div class="dropzone-box" onclick="triggerSharedFileInput()">
         <div class="dropzone-icon">📄</div>
         <div class="dropzone-text">タップしてファイルを選択</div>
         <div class="dropzone-sub">またはここに .json ファイルをドロップ</div>
       </div>
       <input type="file" id="sharedFileInput" accept=".json,application/json,text/plain" style="display:none;" onchange="importJSONFile(event)">
-
       <button class="close-btn" onclick="closeModal('importModal')" style="background:#888; width:100%; margin-top:10px;">キャンセル</button>
     </div>
   </div>
@@ -1425,22 +1479,9 @@
     <div class="modal-content">
       <h3>❓ ご利用ガイド</h3>
       <div class="help-section" style="display:flex; flex-direction:column; gap:4px; max-height: 60vh; overflow-y: auto; padding-right: 4px;">
-        
-        <div class="help-box">
-          <h4>1. グループ＆カテゴリ別コレクション</h4>
-          <p>「アイドルグループ」「コンカフェ」「その他」のカテゴリ別、グループごとに推しメンが美しく整理されます。</p>
-        </div>
-
-        <div class="help-box">
-          <h4>2. 担当カラーによるカードの個別着せ替え</h4>
-          <p>担当カラーに入力した色（例: `#ff85a2`, `pink`, `#ffd700` など）がカードの左端のボーダーにそのまま反映されます。</p>
-        </div>
-
-        <div class="help-box">
-          <h4>3. 📤 友だちへのチェキ共有</h4>
-          <p>推しメンのデータや裏面メッセージをJSONファイル形式で友達に簡単シェア！</p>
-        </div>
-
+        <div class="help-box"><h4>1. グループ＆カテゴリ別コレクション</h4><p>「アイドルグループ」「コンカフェ」「その他」のカテゴリ別、グループごとに推しメンが美しく整理されます。</p></div>
+        <div class="help-box"><h4>2. 📸 チェキ一覧 (3x3グリッド)</h4><p>推しメンカードの枚数バッジをタップすると、そのアイドルと撮影したチェキ画像をインスタ風の3x3グリッドで一覧表示＆拡大表示できます。</p></div>
+        <div class="help-box"><h4>3. 📤 友だちへのチェキ共有</h4><p>推しメンのデータや裏面メッセージをJSONファイル形式で友達に簡単シェア！</p></div>
       </div>
       <button class="close-btn" onclick="closeModal('helpModal')" style="margin-top:10px;">了解して閉じる</button>
     </div>
@@ -1451,26 +1492,16 @@
       <h3>✏️ 記録の編集・ライブメモ</h3>
       <form class="add-form" onsubmit="saveEditedRecord(event)">
         <input type="hidden" id="editRecordIndex">
+        <div class="form-group"><label>対象 / 日付</label><div id="editRecordHeader" style="font-size:0.85rem; font-weight:bold; color:var(--text-color);"></div></div>
+        
         <div class="form-group">
-          <label>対象 / 日付</label>
-          <div id="editRecordHeader" style="font-size:0.85rem; font-weight:bold; color:var(--text-color);"></div>
+          <label>チェキ画像URL（任意）</label>
+          <input type="url" id="editCheckImg" placeholder="https://i.imgur.com/...">
         </div>
 
-        <div class="form-group">
-          <label>マーク・フラグ</label>
-          <input type="text" id="editFlags" placeholder="マークを入力">
-        </div>
-
-        <div class="form-group">
-          <label>ライブ・チェキ会の感想メモ</label>
-          <textarea id="editVisitNote" rows="3" placeholder="セトリや会話内容など..."></textarea>
-        </div>
-
-        <div class="form-group">
-          <label>レポ記事・SNSリンク</label>
-          <input type="url" id="editReportUrl" placeholder="https://x.com/...">
-        </div>
-
+        <div class="form-group"><label>マーク・フラグ</label><input type="text" id="editFlags" placeholder="マークを入力"></div>
+        <div class="form-group"><label>ライブ・チェキ会の感想メモ</label><textarea id="editVisitNote" rows="3" placeholder="セトリや会話内容など..."></textarea></div>
+        <div class="form-group"><label>レポ記事・SNSリンク</label><input type="url" id="editReportUrl" placeholder="https://x.com/..."></div>
         <div style="display:flex; gap:8px; margin-top:10px;">
           <button type="submit" class="close-btn" style="flex:1;">更新して保存</button>
           <button type="button" class="close-btn" onclick="closeModal('editRecordModal')" style="background:#888; flex:1;">キャンセル</button>
@@ -1484,39 +1515,23 @@
       <h3>✨ チェキ・現場記録を追加</h3>
       <form class="add-form" onsubmit="saveNewRecord(event)">
         <div class="form-row" style="display:flex; gap:6px;">
-          <div class="form-group" style="flex:1;">
-            <label>年</label>
-            <input type="text" id="addYear" placeholder="2026" required>
-          </div>
-          <div class="form-group" style="flex:1;">
-            <label>月</label>
-            <input type="text" id="addMonth" placeholder="8月" required>
-          </div>
+          <div class="form-group" style="flex:1;"><label>年</label><input type="text" id="addYear" placeholder="2026" required></div>
+          <div class="form-group" style="flex:1;"><label>月</label><input type="text" id="addMonth" placeholder="8月" required></div>
         </div>
-
-        <div class="form-group">
-          <label>推しメン名</label>
-          <input type="text" id="addName" placeholder="例: ゆあ" required>
-        </div>
-
+        <div class="form-group"><label>推しメン名</label><input type="text" id="addName" placeholder="例: ゆあ" required></div>
         <div class="form-row" style="display:flex; gap:6px;">
-          <div class="form-group" style="flex:1;">
-            <label>カテゴリ</label>
-            <select id="addCategory">
-              <option value="アイドルグループ">アイドルグループ</option>
-              <option value="コンカフェ">コンカフェ</option>
-              <option value="その他">その他</option>
-            </select>
-          </div>
-          <div class="form-group" style="flex:1;">
-            <label>グループ・店舗名</label>
-            <input type="text" id="addGroupName" placeholder="例: ♯BABY'S">
-          </div>
+          <div class="form-group" style="flex:1;"><label>カテゴリ</label><select id="addCategory"><option value="アイドルグループ">アイドルグループ</option><option value="コンカフェ">コンカフェ</option><option value="その他">その他</option></select></div>
+          <div class="form-group" style="flex:1;"><label>グループ・店舗名</label><input type="text" id="addGroupName" placeholder="例: ♯BABY'S"></div>
         </div>
-
+        <div class="form-group"><label>担当カラー（カラーコードや色名）</label><input type="text" id="addColor" placeholder="例: #ff85a2 または pink"></div>
+        
         <div class="form-group">
-          <label>担当カラー（カラーコードや色名）</label>
-          <input type="text" id="addColor" placeholder="例: #ff85a2 または pink">
+          <label>チェキ画像URL（または下のファイル選択で自動入力）</label>
+          <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+            <input type="file" id="chekiImageFileToUpload" accept="image/*" style="font-size: 0.75rem; padding: 4px;" onchange="uploadChekiImageToImgur(this)">
+            <span id="chekiUploadStatus" style="font-size: 0.7rem; color: var(--light-text);">未選択</span>
+          </div>
+          <input type="url" id="addCheckImg" placeholder="https://i.imgur.com/...">
         </div>
 
         <div class="form-group">
@@ -1533,37 +1548,20 @@
           </div>
           <input type="text" id="addFlags" placeholder="マークを入力">
         </div>
-
-        <div class="form-group">
-          <label>感想・会話メモ</label>
-          <input type="text" id="addVisitNote" placeholder="「可愛いって言ったら照れてた」など">
-        </div>
-
-        <div class="form-group">
-          <label>レポ・SNSリンク（あれば）</label>
-          <input type="url" id="addReportUrl" placeholder="https://x.com/...">
-        </div>
-
+        <div class="form-group"><label>感想・会話メモ</label><input type="text" id="addVisitNote" placeholder="「可愛いって言ったら照れてた」など"></div>
+        <div class="form-group"><label>レポ・SNSリンク（あれば）</label><input type="url" id="addReportUrl" placeholder="https://x.com/..."></div>
         <div class="form-row" style="display:flex; gap:6px;">
-          <div class="form-group" style="flex:1;">
-            <label>旧名義・別グループ名</label>
-            <input type="text" id="addOldName" placeholder="例: 研修生時代">
-          </div>
-          <div class="form-group" style="flex:1;">
-            <label>SNSプロフURL</label>
-            <input type="url" id="addLink" placeholder="https://x.com/...">
-          </div>
+          <div class="form-group" style="flex:1;"><label>旧名義・別グループ名</label><input type="text" id="addOldName" placeholder="例: 研修生時代"></div>
+          <div class="form-group" style="flex:1;"><label>SNSプロフURL</label><input type="url" id="addLink" placeholder="https://x.com/..."></div>
         </div>
-
         <div class="form-group">
           <label>チェキ裏面メッセージ画像</label>
           <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
             <input type="file" id="imageFileToUpload" accept="image/*" style="font-size: 0.75rem; padding: 4px;" onchange="uploadImageToImgur(this)">
             <span id="uploadStatus" style="font-size: 0.7rem; color: var(--light-text);">未選択</span>
           </div>
-          <input type="url" id="addLetterImg" placeholder="https://i.imgur.com/... (自動入力されます)">
+          <input type="url" id="addLetterImg" placeholder="https://i.imgur.com/...">
         </div>
-
         <div style="display:flex; gap:8px; margin-top:10px;">
           <button type="submit" class="close-btn" style="flex:1;">保存する</button>
           <button type="button" class="close-btn" onclick="closeModal('addModal')" style="background:#888; flex:1;">キャンセル</button>
@@ -1576,11 +1574,7 @@
     <div class="modal-content">
       <h3 id="gachaTitle">🎰 本日の推しメン抽選中...</h3>
       <p style="font-size:0.75rem; color:var(--light-text);" id="gachaSub">在籍中の推しメンから選出中！</p>
-      
-      <div class="roulette-container" id="rouletteBox">
-        <div class="modal-cast-name" id="gachaResultName">???</div>
-      </div>
-
+      <div class="roulette-container" id="rouletteBox"><div class="modal-cast-name" id="gachaResultName">???</div></div>
       <button class="close-btn" id="gachaCloseBtn" onclick="closeModal('gachaModal')" disabled>抽選中...</button>
     </div>
   </div>
@@ -1610,7 +1604,6 @@
         document.documentElement.setAttribute('data-theme', themeName);
       }
       localStorage.setItem('app_theme', themeName);
-
       document.querySelectorAll('.theme-item-btn').forEach(btn => btn.classList.remove('active'));
       const activeBtn = document.getElementById('btnTheme' + themeName.charAt(0).toUpperCase() + themeName.slice(1));
       if (activeBtn) activeBtn.classList.add('active');
@@ -1633,7 +1626,7 @@
       document.getElementById('importModal').style.display = 'flex';
     }
 
-    const LATEST_VERSION_KEY = 'cheki_app_version_v1.2_shown';
+    const LATEST_VERSION_KEY = 'cheki_app_version_v1.3_shown';
     function checkWhatsNew() {
       if (!localStorage.getItem(LATEST_VERSION_KEY)) {
         document.getElementById('whatsNewModal').style.display = 'flex';
@@ -1647,16 +1640,12 @@
 
     function initUserData() {
       applyTheme(currentTheme);
-
       const savedHist = localStorage.getItem('cheki_hist_' + currentUserName);
       const savedCast = localStorage.getItem('cheki_cast_' + currentUserName);
-      
       historyList = savedHist ? JSON.parse(savedHist) : [];
       castData = savedCast ? JSON.parse(savedCast) : {};
-      
       const savedShared = localStorage.getItem('cheki_shared_list_' + currentUserName);
       sharedRecords = savedShared ? JSON.parse(savedShared) : [];
-
       updateUIHeader();
       updateSharedCount();
       render();
@@ -1687,14 +1676,11 @@
         localStorage.removeItem('cheki_hist_' + currentUserName);
         localStorage.removeItem('cheki_cast_' + currentUserName);
         localStorage.removeItem('cheki_shared_list_' + currentUserName);
-
         currentUserName = '推し活民';
         localStorage.setItem('app_user_name', currentUserName);
-        
         historyList = [];
         castData = {};
         sharedRecords = [];
-
         saveData();
         initUserData();
         render();
@@ -1706,13 +1692,12 @@
     function exportJSONFile() {
       const exportObject = {
         app: "推し活チェキ図鑑",
-        version: "1.2",
+        version: "1.3",
         exportDate: new Date().toISOString(),
         userName: currentUserName,
         historyList: historyList,
         castData: castData
       };
-
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObject, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
@@ -1726,11 +1711,9 @@
       event.preventDefault(); event.stopPropagation();
       targetExportCastName = name;
       document.getElementById('exportModalCastName').innerText = name;
-      
       document.getElementById('chkIncludeInfo').checked = true;
       document.getElementById('chkIncludeVisits').checked = true;
       document.getElementById('chkIncludeLetters').checked = true;
-
       updateExportFileName();
       document.getElementById('exportCastModal').style.display = 'flex';
     }
@@ -1741,14 +1724,12 @@
       if (document.getElementById('chkIncludeInfo').checked) opts.push('info');
       if (document.getElementById('chkIncludeVisits').checked) opts.push('visits');
       if (document.getElementById('chkIncludeLetters').checked) opts.push('letters');
-      
       const fileName = `共有推しメン_${name}_[${opts.join('-')}](from_${currentUserName}).json`;
       document.getElementById('exportModalFileName').innerText = fileName;
     }
 
     function executeCastDownload() {
       if (!targetExportCastName) return;
-
       const name = targetExportCastName;
       const includeInfo = document.getElementById('chkIncludeInfo').checked;
       const includeVisits = document.getElementById('chkIncludeVisits').checked;
@@ -1756,7 +1737,7 @@
 
       const singleExportObject = {
         app: "推し活チェキ図鑑_選択共有",
-        version: "1.2",
+        version: "1.3",
         sharedBy: currentUserName,
         castName: name,
         info: includeInfo ? (castData[name] || {}) : null,
@@ -1772,28 +1753,20 @@
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
-
       closeModal('exportCastModal');
       alert(`✨ 「${fileName}」をダウンロードしました！LINE等で友達に送信してください。`);
     }
 
-    function triggerJSONFileInput() {
-      document.getElementById('jsonFileInput').click();
-    }
-
-    function triggerSharedFileInput() {
-      document.getElementById('sharedFileInput').click();
-    }
+    function triggerJSONFileInput() { document.getElementById('jsonFileInput').click(); }
+    function triggerSharedFileInput() { document.getElementById('sharedFileInput').click(); }
 
     function importJSONFile(event) {
       const file = event.target.files[0];
       if (!file) return;
-
       const reader = new FileReader();
       reader.onload = function(e) {
         try {
           const imported = JSON.parse(e.target.result);
-
           if (imported.app === "推し活チェキ図鑑_選択共有" || imported.castName) {
             sharedRecords.unshift({
               fromUser: imported.sharedBy || "友達",
@@ -1811,7 +1784,6 @@
             alert(`👥 ${imported.sharedBy || '友達'}さんから共有された「${imported.castName}」のデータを受信しました！`);
             return;
           }
-
           if (imported.historyList && imported.castData) {
             if (confirm(`「${imported.userName || 'バックアップ'}」の全データで図鑑を復元しますか？`)) {
               currentUserName = imported.userName || '推し活民';
@@ -1826,7 +1798,6 @@
             }
             return;
           }
-
           alert("⚠️ 無効なファイル形式です。");
         } catch (err) {
           alert("⚠️ ファイルの読み込みに失敗しました。正しいJSONファイルを選択してください。");
@@ -1839,38 +1810,53 @@
     async function uploadImageToImgur(inputElem) {
       const file = inputElem.files[0];
       if (!file) return;
-
       const statusSpan = document.getElementById('uploadStatus');
       const urlInput = document.getElementById('addLetterImg');
-      
       statusSpan.innerText = "アップロード中...";
       statusSpan.style.color = "var(--accent-pink)";
-
       const formData = new FormData();
       formData.append('image', file);
-
       try {
         const response = await fetch('https://api.imgur.com/3/image', {
           method: 'POST',
-          headers: {
-            'Authorization': 'Client-ID 546c25a59c58ad7' 
-          },
+          headers: { 'Authorization': 'Client-ID 546c25a59c58ad7' },
           body: formData
         });
-
         const result = await response.json();
-
         if (result.success) {
-          const imageUrl = result.data.link;
-          urlInput.value = imageUrl;
-          statusSpan.innerText = "アップロード完了！✨";
+          urlInput.value = result.data.link;
+          statusSpan.innerText = "完了！✨";
           statusSpan.style.color = "#0ca678";
-        } else {
-          throw new Error(result.data.error.message || "アップロード失敗");
-        }
+        } else { throw new Error(); }
       } catch (error) {
-        console.error(error);
-        statusSpan.innerText = "失敗しました。再試行してください";
+        statusSpan.innerText = "失敗しました";
+        statusSpan.style.color = "#ff6b6b";
+      }
+    }
+
+    async function uploadChekiImageToImgur(inputElem) {
+      const file = inputElem.files[0];
+      if (!file) return;
+      const statusSpan = document.getElementById('chekiUploadStatus');
+      const urlInput = document.getElementById('addCheckImg');
+      statusSpan.innerText = "アップロード中...";
+      statusSpan.style.color = "var(--accent-pink)";
+      const formData = new FormData();
+      formData.append('image', file);
+      try {
+        const response = await fetch('https://api.imgur.com/3/image', {
+          method: 'POST',
+          headers: { 'Authorization': 'Client-ID 546c25a59c58ad7' },
+          body: formData
+        });
+        const result = await response.json();
+        if (result.success) {
+          urlInput.value = result.data.link;
+          statusSpan.innerText = "完了！✨";
+          statusSpan.style.color = "#0ca678";
+        } else { throw new Error(); }
+      } catch (error) {
+        statusSpan.innerText = "失敗しました";
         statusSpan.style.color = "#ff6b6b";
       }
     }
@@ -1880,7 +1866,6 @@
       const sharedArea = document.getElementById('sharedTabArea');
       const btnMy = document.getElementById('tabMyRecords');
       const btnShared = document.getElementById('tabSharedRecords');
-
       if (type === 'my') {
         myArea.style.display = 'block';
         sharedArea.style.display = 'none';
@@ -1898,7 +1883,6 @@
     function renderSharedArea() {
       const container = document.getElementById('sharedContent');
       container.innerHTML = '';
-
       if (sharedRecords.length === 0) {
         container.innerHTML = `
           <div class="empty-shared-box">
@@ -1909,20 +1893,11 @@
         `;
         return;
       }
-
       sharedRecords.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = 'shared-card';
-
-        let visitSummary = "";
-        if (item.visits && item.visits.length > 0) {
-          visitSummary = `${item.visits.length}枚のチェキ・ライブ記録`;
-        } else {
-          visitSummary = '<span class="friend-visited-badge">⚠️ 推しメン情報のみ</span>';
-        }
-
+        let visitSummary = item.visits && item.visits.length > 0 ? `${item.visits.length}枚のチェキ・ライブ記録` : '<span class="friend-visited-badge">⚠️ 推しメン情報のみ</span>';
         let infoText = item.info ? (item.info.notes || 'メモなし') : '情報なし';
-
         card.innerHTML = `
           <div class="shared-header">
             <span>👤 共有者: ${item.fromUser} さん</span>
@@ -1931,13 +1906,10 @@
               <button onclick="deleteSharedRecord(${index})" class="link-btn" style="color:#888; border-color:#888;">🗑 削除</button>
             </div>
           </div>
-          <div style="font-size:0.95rem; font-weight:bold; color:var(--text-color); margin:4px 0;">
-            💖 ${item.castName} 
-          </div>
+          <div style="font-size:0.95rem; font-weight:bold; color:var(--text-color); margin:4px 0;">💖 ${item.castName}</div>
           <div style="font-size:0.75rem; color:var(--light-text);">${visitSummary}</div>
           <div style="font-size:0.75rem; color:var(--text-color); margin-top:4px;">メモ: ${infoText}</div>
         `;
-
         container.appendChild(card);
       });
     }
@@ -1986,15 +1958,12 @@
       input.value = (input.value || '') + char;
     }
 
-    function clearFlagsInput() {
-      document.getElementById('addFlags').value = '';
-    }
+    function clearFlagsInput() { document.getElementById('addFlags').value = ''; }
 
     function saveUserName(event) {
       event.preventDefault();
       const input = document.getElementById('inputUserName').value.trim();
       if (!input) return alert("お名前を入力してください！");
-
       currentUserName = input;
       saveData();
       initUserData();
@@ -2041,6 +2010,9 @@
       document.getElementById('imageFileToUpload').value = '';
       document.getElementById('uploadStatus').innerText = '未選択';
       document.getElementById('uploadStatus').style.color = 'var(--light-text)';
+      document.getElementById('chekiImageFileToUpload').value = '';
+      document.getElementById('chekiUploadStatus').innerText = '未選択';
+      document.getElementById('chekiUploadStatus').style.color = 'var(--light-text)';
       document.getElementById('addModal').style.display = 'flex';
     }
 
@@ -2052,6 +2024,7 @@
       const category = document.getElementById('addCategory').value;
       const groupName = document.getElementById('addGroupName').value.trim();
       const color = document.getElementById('addColor').value.trim();
+      const chekiImg = document.getElementById('addCheckImg').value.trim();
       
       const flags = document.getElementById('addFlags').value.trim();
       const visitNote = document.getElementById('addVisitNote').value.trim();
@@ -2062,7 +2035,7 @@
 
       if (!year || !month || !name) return alert("年、月、推しメン名は必須です！");
 
-      historyList.push({ year, month, name, flags, visitNote, reportUrl });
+      historyList.push({ year, month, name, flags, visitNote, reportUrl, chekiImg });
 
       if (!castData[name]) {
         castData[name] = { link: link, notes: "", oldName: oldName, category: category, group: groupName, color: color, letters: [] };
@@ -2076,11 +2049,7 @@
 
       if (letterImg) {
         if (!castData[name].letters) castData[name].letters = [];
-        castData[name].letters.push({
-          date: year + "年" + month,
-          imageUrl: letterImg,
-          text: ""
-        });
+        castData[name].letters.push({ date: year + "年" + month, imageUrl: letterImg, text: "" });
       }
 
       saveData();
@@ -2091,6 +2060,7 @@
       document.getElementById('addName').value = '';
       document.getElementById('addGroupName').value = '';
       document.getElementById('addColor').value = '';
+      document.getElementById('addCheckImg').value = '';
       document.getElementById('addFlags').value = '';
       document.getElementById('addVisitNote').value = '';
       document.getElementById('addReportUrl').value = '';
@@ -2106,6 +2076,7 @@
 
       document.getElementById('editRecordIndex').value = index;
       document.getElementById('editRecordHeader').innerText = `${rec.year}年 ${rec.month} - ${rec.name}`;
+      document.getElementById('editCheckImg').value = rec.chekiImg || '';
       document.getElementById('editFlags').value = rec.flags || '';
       document.getElementById('editVisitNote').value = rec.visitNote || '';
       document.getElementById('editReportUrl').value = rec.reportUrl || '';
@@ -2118,6 +2089,7 @@
       const index = parseInt(document.getElementById('editRecordIndex').value, 10);
       const rec = historyList[index];
       if (rec) {
+        rec.chekiImg = document.getElementById('editCheckImg').value.trim();
         rec.flags = document.getElementById('editFlags').value.trim();
         rec.visitNote = document.getElementById('editVisitNote').value.trim();
         rec.reportUrl = document.getElementById('editReportUrl').value.trim();
@@ -2125,6 +2097,46 @@
         render();
         closeModal('editRecordModal');
       }
+    }
+
+    // 🖼️ アイドル別チェキ一覧（3x3グリッド）を開く関数
+    function openChekiGalleryModal(event, name) {
+      event.preventDefault(); event.stopPropagation();
+      const visits = historyList.filter(v => v.name === name);
+      
+      document.getElementById('galleryModalTitle').innerText = `🖼️ ${name} のチェキ一覧 (${visits.length}枚)`;
+      const gridContainer = document.getElementById('chekiGalleryGrid');
+      gridContainer.innerHTML = '';
+
+      if (visits.length === 0) {
+        gridContainer.innerHTML = `<div style="grid-column: span 3; text-align:center; padding:20px; font-size:0.8rem; color:var(--light-text);">チェキ画像がまだ登録されていません</div>`;
+      } else {
+        visits.forEach(v => {
+          const item = document.createElement('div');
+          item.className = 'cheki-grid-item';
+          if (v.chekiImg && v.chekiImg.trim() !== "") {
+            item.innerHTML = `<img src="${v.chekiImg}" alt="チェキ" onclick="openFullscreen('${v.chekiImg}')">`;
+          } else {
+            item.innerHTML = `<div class="cheki-grid-placeholder" onclick="openFullscreen('')"><span>${v.year.slice(2)}/${v.month}</span><span>画像なし</span></div>`;
+          }
+          gridContainer.appendChild(item);
+        });
+      }
+
+      document.getElementById('chekiGalleryModal').style.display = 'flex';
+    }
+
+    // 🔍 フルスクリーン画像プレビューを開く
+    function openFullscreen(url) {
+      if (!url) return;
+      const overlay = document.getElementById('fullscreenOverlay');
+      const img = document.getElementById('fullscreenImg');
+      img.src = url;
+      overlay.style.display = 'flex';
+    }
+
+    function closeFullscreen() {
+      document.getElementById('fullscreenOverlay').style.display = 'none';
     }
 
     function openLetterModal(event, name) {
@@ -2145,31 +2157,21 @@
         return;
       }
 
-      const titleElem = document.getElementById('letterModalTitle');
-      if (titleElem) {
-        titleElem.innerText = "💌 " + name + " のチェキ裏メッセージ";
-      }
-
+      document.getElementById('letterModalTitle').innerText = "💌 " + name + " のチェキ裏メッセージ";
       const container = document.getElementById('letterModalContainer');
-      if (container) {
-        container.innerHTML = '';
-        validLetters.forEach(item => {
-          let imgHtml = (item.imageUrl && item.imageUrl.trim() !== "") ? '<img src="' + item.imageUrl + '" class="letter-img" alt="裏面メッセージ画像">' : '';
-          let textHtml = (item.text && item.text.trim() !== "") ? '<div class="letter-text-box">' + item.text + '</div>' : '';
-          
-          container.innerHTML += 
-            '<div class="letter-card-item">' +
-              '<div class="letter-date">📅 ' + (item.date || '日付不明') + '</div>' +
-              imgHtml +
-              textHtml +
-            '</div>';
-        });
-      }
-
-      const modal = document.getElementById('letterModal');
-      if (modal) {
-        modal.style.display = 'flex';
-      }
+      container.innerHTML = '';
+      validLetters.forEach(item => {
+        let imgHtml = (item.imageUrl && item.imageUrl.trim() !== "") ? '<img src="' + item.imageUrl + '" class="letter-img" alt="裏面メッセージ画像" onclick="openFullscreen(\''+item.imageUrl+'\')">' : '';
+        let textHtml = (item.text && item.text.trim() !== "") ? '<div class="letter-text-box">' + item.text + '</div>' : '';
+        container.innerHTML += `
+          <div class="letter-card-item">
+            <div class="letter-date">📅 ${item.date || '日付不明'}</div>
+            ${imgHtml}
+            ${textHtml}
+          </div>
+        `;
+      });
+      document.getElementById('letterModal').style.display = 'flex';
     }
 
     function closeModal(id) {
@@ -2196,7 +2198,6 @@
       modal.style.display = 'flex';
 
       const winner = activeList[Math.floor(Math.random() * activeList.length)];
-      
       let speed = 50;
       let count = 0;
       const maxCount = 25;
@@ -2205,7 +2206,6 @@
         const tempName = activeList[Math.floor(Math.random() * activeList.length)];
         nameElem.innerText = tempName;
         count++;
-
         if (count < maxCount) {
           speed += count * 4;
           setTimeout(shuffle, speed);
@@ -2218,7 +2218,6 @@
           closeBtn.innerText = "決定！";
         }
       }
-
       shuffle();
     }
 
@@ -2262,7 +2261,6 @@
 
     function renderCastView(target, keyword) {
       const map = {};
-      
       historyList.forEach((item, idx) => {
         if (!map[item.name]) {
           map[item.name] = { name: item.name, visits: [], lastIdx: idx, favCount: 0, hasBad: false, lastVisit: item };
@@ -2281,7 +2279,6 @@
       });
 
       updateStats(map);
-
       let list = Object.values(map);
 
       if (currentFilter === 'active') list = list.filter(c => castData[c.name] && castData[c.name].link && castData[c.name].link.trim() !== "");
@@ -2308,13 +2305,11 @@
         list.sort((a,b) => a.name.localeCompare(b.name, 'ja'));
       }
 
-      // カテゴリ・グループごとにグルーピング
       const groupedByCategory = {};
       list.forEach(c => {
         const info = castData[c.name] || {};
         const cat = info.category || 'その他';
         const grp = info.group || '一般・フリー';
-
         if (!groupedByCategory[cat]) groupedByCategory[cat] = {};
         if (!groupedByCategory[cat][grp]) groupedByCategory[cat][grp] = [];
         groupedByCategory[cat][grp].push(c);
@@ -2324,7 +2319,6 @@
       
       categoryOrder.forEach(cat => {
         if (!groupedByCategory[cat]) return;
-
         const catSection = document.createElement('div');
         catSection.className = 'group-section';
 
@@ -2355,11 +2349,9 @@
             const info = castData[c.name] || { link: "", notes: "", oldName: "", group: "", color: "", letters: [] };
             const url = info.link;
             const oldName = info.oldName || "";
-            const groupName = info.group || "";
             const colorCode = info.color || "";
             const isActive = url && url.trim() !== "";
 
-            // 担当カラーが入力されていればカードの左端ボーダーに反映
             if (colorCode.trim() !== "") {
               details.style.borderLeftColor = colorCode;
             }
@@ -2374,26 +2366,16 @@
               ? '<span class="status-badge status-active">現役</span>' 
               : '<span class="status-badge status-retired">卒業/不詳</span>';
 
-            const oldNameBadgeHtml = oldName 
-              ? '<span class="old-name-badge">旧: ' + oldName + '</span>' 
-              : '';
+            const oldNameBadgeHtml = oldName ? '<span class="old-name-badge">旧: ' + oldName + '</span>' : '';
 
-            const badgeClass = "badge-count";
+            // 枚数バッジをクリックすると「アイドル別チェキ一覧（3x3グリッド）」が開く
+            const badgeCountHtml = `<span class="badge-count" onclick="openChekiGalleryModal(event, '${c.name}')" title="3x3グリッドでチェキを見る">${c.visits.length}枚</span>`;
 
-            const linkBtnHtml = isActive 
-              ? '<button class="link-btn" onclick="openLink(event, \'' + url + '\')">SNS</button>' 
-              : '';
-
+            const linkBtnHtml = isActive ? '<button class="link-btn" onclick="openLink(event, \'' + url + '\')">SNS</button>' : '';
             const copyBtnHtml = '<button class="copy-btn" onclick="openExportCastModal(event, \'' + c.name + '\')">📤 共有</button>';
+            const letterBtnHtml = hasLetters ? '<button class="letter-btn" onclick="openLetterModal(event, \'' + c.name + '\')">💌 裏面 (' + validLetters.length + ')</button>' : '';
 
-            const letterBtnHtml = hasLetters 
-              ? '<button class="letter-btn" onclick="openLetterModal(event, \'' + c.name + '\')">💌 裏面 (' + validLetters.length + ')</button>' 
-              : '';
-
-            const notesWithDate = c.visits
-              .filter(v => v.visitNote && v.visitNote.trim() !== '')
-              .reverse();
-
+            const notesWithDate = c.visits.filter(v => v.visitNote && v.visitNote.trim() !== '').reverse();
             const latestNote = notesWithDate.length > 0 ? notesWithDate[0] : null;
             const pastNotes = notesWithDate.length > 1 ? notesWithDate.slice(1) : [];
 
@@ -2413,7 +2395,6 @@
               pastNotes.forEach(pn => {
                 pastItemsHtml += `<div class="past-note-item">📅 ${pn.year}年${pn.month}: ${pn.visitNote}</div>`;
               });
-
               notesContentHtml += `
                 <details class="past-notes-details">
                   <summary class="past-notes-summary">… 過去のメモを表示 (${pastNotes.length}件)</summary>
@@ -2425,10 +2406,12 @@
             let rowsHtml = '';
             c.visits.forEach(v => {
               const reportTag = v.reportUrl ? '<span class="report-badge">リンク有</span>' : '';
+              const imgPreviewTag = v.chekiImg ? `<button class="photo-gallery-btn" onclick="openFullscreen('${v.chekiImg}')">📷 チェキ</button>` : '';
               rowsHtml += `
                 <div class="history-row">
                   <span class="history-date">${v.year.slice(2)}年 ${v.month} ${reportTag}</span>
                   <div style="display:flex; align-items:center; gap:6px;">
+                    ${imgPreviewTag}
                     <span class="history-flags">${v.flags || '通常'}</span>
                     <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${v.originalIndex})" title="編集">
                       <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
@@ -2439,45 +2422,41 @@
 
             const superBadgeHtml = isSuperFav ? '<span class="super-tag">大推し</span>' : '';
             const notesHtml = '<div class="notes-box">' + notesContentHtml + '</div>';
-            
             let styleHtml = '<div class="style-row"><div class="style-pill"><span class="style-pill-label">担当カラー</span><span class="style-pill-val">' + (colorCode || '未設定') + '</span></div></div>';
-            
             const daysAgoText = c.lastVisit ? calcMonthsAgo(c.lastVisit.year, c.lastVisit.month) : "チェキ記録なし";
 
-            details.innerHTML = 
-              '<summary class="card-btn">' +
-                '<div class="cast-info">' +
-                  '<span class="arrow-icon">▼</span> ' +
-                  '<span>' + c.name + '</span> ' +
-                  oldNameBadgeHtml + ' ' +
-                  statusBadgeHtml + ' ' +
-                  superBadgeHtml +
-                '</div>' +
-                '<span class="' + badgeClass + '">' + c.visits.length + '枚</span>' +
-              '</summary>' +
-              '<div class="anim-wrapper">' +
-                '<div class="anim-inner">' +
-                  '<div class="card-body">' +
-                    styleHtml +
-                    '<div class="card-middle-row">' +
-                      notesHtml +
-                      '<div class="btn-action-group">' +
-                        letterBtnHtml +
-                        copyBtnHtml +
-                        linkBtnHtml +
-                      '</div>' +
-                    '</div>' +
-                    '<div class="days-ago-tag">最終チェキ: ' + daysAgoText + '</div>' +
-                    rowsHtml +
-                  '</div>' +
-                '</div>' +
-              '</div>';
+            details.innerHTML = `
+              <summary class="card-btn">
+                <div class="cast-info">
+                  <span class="arrow-icon">▼</span>
+                  <span>${c.name}</span>
+                  ${oldNameBadgeHtml}
+                  ${statusBadgeHtml}
+                  ${superBadgeHtml}
+                </div>
+                ${badgeCountHtml}
+              </summary>
+              <div class="anim-wrapper">
+                <div class="anim-inner">
+                  <div class="card-body">
+                    ${styleHtml}
+                    <div class="card-middle-row">
+                      ${notesHtml}
+                      <div class="btn-action-group">
+                        ${letterBtnHtml}
+                        ${copyBtnHtml}
+                        ${linkBtnHtml}
+                      </div>
+                    </div>
+                    <div class="days-ago-tag">最終チェキ: ${daysAgoText}</div>
+                    ${rowsHtml}
+                  </div>
+                </div>
+              </div>`;
             grid.appendChild(details);
           });
-
           catSection.appendChild(grid);
         });
-
         target.appendChild(catSection);
       });
     }
@@ -2492,7 +2471,6 @@
       });
 
       const keys = Object.keys(groups).reverse();
-
       keys.forEach(key => {
         let items = groups[key];
         if (keyword) {
@@ -2512,10 +2490,10 @@
           items.forEach(i => {
             const details = document.createElement('details');
             details.className = 'timeline-item';
-
             const hasReport = i.reportUrl && i.reportUrl.trim() !== '';
             const reportBadgeHtml = hasReport ? '<span class="report-badge">リンク有</span>' : '';
             const reportLinkHtml = hasReport ? `<a href="${i.reportUrl}" target="_blank" class="report-link-btn">🔗 関連リンクを開く</a>` : '';
+            const imgBtnHtml = i.chekiImg ? `<button class="photo-gallery-btn" onclick="openFullscreen('${i.chekiImg}')">📷 チェキ</button>` : '';
             const noteHtml = i.visitNote ? `<div>📝 <strong>メモ:</strong> ${i.visitNote}</div>` : '<div style="color:var(--light-text);">📝 メモなし</div>';
 
             details.innerHTML = `
@@ -2526,6 +2504,7 @@
                   <span>${i.flags || '通常'}</span>
                 </div>
                 <div style="display:flex; align-items:center; gap:6px;">
+                  ${imgBtnHtml}
                   ${reportBadgeHtml}
                   <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${i.originalIndex})" title="編集">
                     <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
@@ -2539,7 +2518,6 @@
             `;
             sec.appendChild(details);
           });
-
           target.appendChild(sec);
         }
       });
