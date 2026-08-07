@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="pageTitle">推し活チェキ帳 [Cheki Book V1.4]</title>
+  <title id="pageTitle">推し活チェキ帳 [Cheki Book V1.5]</title>
   
   <style>
     /* 🎨 CSS変数：テーマ10種類のカラー定義 */
@@ -969,6 +969,23 @@
       background: var(--soft-pink);
     }
 
+    /* 👇チェキ一覧でアイドル名を表示するラベル */
+    .cheki-name-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      font-size: 0.7rem;
+      padding: 3px 2px;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      pointer-events: none; /* クリックを阻害しないようにする */
+    }
+
     /* フルスクリーン画像プレビュー用モーダル */
     .fullscreen-overlay {
       display: none;
@@ -1062,37 +1079,6 @@
       border-color: var(--accent-pink);
       box-shadow: 0 0 8px rgba(247, 37, 133, 0.4);
       background: var(--soft-pink);
-    }
-
-    .roulette-container {
-      background: var(--soft-pink);
-      border: 2px dashed var(--primary-pink);
-      border-radius: 14px;
-      padding: 16px 8px;
-      margin: 14px 0;
-      min-height: 70px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-    }
-
-    .roulette-container.winner {
-      background: linear-gradient(135deg, var(--gold-bg-start), var(--gold-bg-end));
-      border: 2px solid var(--gold-border);
-      box-shadow: 0 0 15px rgba(243, 198, 66, 0.6);
-      transform: scale(1.03);
-    }
-
-    .modal-cast-name {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: var(--text-color);
-    }
-
-    .roulette-container.winner .modal-cast-name {
-      color: var(--accent-pink);
-      font-size: 1.7rem;
     }
 
     .close-btn {
@@ -1265,7 +1251,8 @@
         <div class="search-box">
           <input type="text" id="searchKeyword" placeholder="アイドル名やイベント名で検索..." oninput="render()">
         </div>
-        <button class="btn-gacha" onclick="runGacha()">🎰 推しメンガチャ</button>
+        <!-- 👇 推しメンガチャボタンを「僕のチェキ帳」ボタンに変更 -->
+        <button class="btn-gacha" onclick="openAllChekiModal()">📖 僕のチェキ帳</button>
       </div>
 
       <div class="filter-tags">
@@ -1316,7 +1303,7 @@
 
   <button class="fab-add" onclick="openAddModal()" title="新しいチェキ・ライブ記録を追加">＋</button>
 
-  <!-- 📸 インスタ風3x3グリッドギャラリーモーダル（チェキ帳ボタン用） -->
+  <!-- 📸 インスタ風3x3グリッドギャラリーモーダル（アイドル個別用） -->
   <div class="modal-overlay" id="chekiGalleryModal">
     <div class="modal-content gallery-modal-content">
       <h3 id="galleryModalTitle">📖 チェキ帳 (3x3)</h3>
@@ -1330,6 +1317,20 @@
     </div>
   </div>
 
+  <!-- 👇 📸 全チェキ一覧ギャラリーモーダル（「僕のチェキ帳」ボタン用） -->
+  <div class="modal-overlay" id="allChekiModal">
+    <div class="modal-content gallery-modal-content">
+      <h3 id="allChekiModalTitle">📖 僕のチェキ帳 (全チェキ)</h3>
+      <p style="font-size:0.75rem; color:var(--light-text); margin-bottom:4px;">チェキをタップするとフルスクリーンで拡大できます</p>
+      
+      <div class="cheki-grid-3x3" id="allChekiGalleryGrid">
+        <!-- JSで動的生成 -->
+      </div>
+
+      <button class="close-btn" onclick="closeModal('allChekiModal')" style="width:100%; margin-top:8px;">閉じる</button>
+    </div>
+  </div>
+
   <!-- 🔍 フルスクリーン画像プレビュー -->
   <div class="fullscreen-overlay" id="fullscreenOverlay" onclick="closeFullscreen()">
     <img id="fullscreenImg" src="" alt="フルスクリーンチェキ">
@@ -1340,7 +1341,7 @@
     <div class="modal-content">
       <h3>🎉 推し活チェキ図鑑へようこそ！</h3>
       <p style="font-size:0.75rem; color:var(--light-text); margin-bottom:8px;">
-        裏面メッセージ機能を廃止し、各カードに「📖 チェキ帳」ボタンを新設しました！3x3のインスタ風ギャラリー＆フルスクリーン表示をお楽しみください。
+        推しメンガチャ機能を廃止し、すべてのチェキを一覧できる「📖 僕のチェキ帳」ボタンを新設しました！
       </p>
       <button class="close-btn" onclick="closeWhatsNewModal()" style="width:100%; margin-top:4px;">はじめる</button>
     </div>
@@ -1430,7 +1431,7 @@
       <h3>❓ ご利用ガイド</h3>
       <div class="help-section" style="display:flex; flex-direction:column; gap:4px; max-height: 60vh; overflow-y: auto; padding-right: 4px;">
         <div class="help-box"><h4>1. グループ＆カテゴリ別コレクション</h4><p>「アイドルグループ」「コンカフェ」「その他」のカテゴリ別、グループごとに推しメンが美しく整理されます。</p></div>
-        <div class="help-box"><h4>2. 📖 チェキ帳ボタン</h4><p>各カードにある「チェキ帳」ボタンを押すと、そのアイドルのチェキ写真をインスタ風の3x3グリッドで閲覧＆フルスクリーン拡大できます。</p></div>
+        <div class="help-box"><h4>2. 📖 全チェキ一覧</h4><p>上部の「僕のチェキ帳」ボタンを押すと、保存されているすべてのチェキ画像をまとめて閲覧できます。</p></div>
         <div class="help-box"><h4>3. 📤 友だちへのチェキ共有</h4><p>推しメンのデータをJSONファイル形式で友達に簡単シェア！</p></div>
       </div>
       <button class="close-btn" onclick="closeModal('helpModal')" style="margin-top:10px;">了解して閉じる</button>
@@ -1512,15 +1513,6 @@
     </div>
   </div>
 
-  <div class="modal-overlay" id="gachaModal">
-    <div class="modal-content">
-      <h3 id="gachaTitle">🎰 本日の推しメン抽選中...</h3>
-      <p style="font-size:0.75rem; color:var(--light-text);" id="gachaSub">在籍中の推しメンから選出中！</p>
-      <div class="roulette-container" id="rouletteBox"><div class="modal-cast-name" id="gachaResultName">???</div></div>
-      <button class="close-btn" id="gachaCloseBtn" onclick="closeModal('gachaModal')" disabled>抽選中...</button>
-    </div>
-  </div>
-
   <script>
     let currentUserName = localStorage.getItem('app_user_name') || '推し活民';
     let currentTheme = localStorage.getItem('app_theme') || 'default';
@@ -1552,7 +1544,7 @@
     function openHelpModal() { document.getElementById('helpModal').style.display = 'flex'; }
     function openImportModal() { document.getElementById('importModal').style.display = 'flex'; }
 
-    const LATEST_VERSION_KEY = 'cheki_app_version_v1.4_shown';
+    const LATEST_VERSION_KEY = 'cheki_app_version_v1.5_shown';
     function checkWhatsNew() {
       if (!localStorage.getItem(LATEST_VERSION_KEY)) {
         document.getElementById('whatsNewModal').style.display = 'flex';
@@ -1618,7 +1610,7 @@
     function exportJSONFile() {
       const exportObject = {
         app: "推し活チェキ帳",
-        version: "1.4",
+        version: "1.5",
         exportDate: new Date().toISOString(),
         userName: currentUserName,
         historyList: historyList,
@@ -1660,7 +1652,7 @@
 
       const singleExportObject = {
         app: "推し活チェキ帳_選択共有",
-        version: "1.4",
+        version: "1.5",
         sharedBy: currentUserName,
         castName: name,
         info: includeInfo ? (castData[name] || {}) : null,
@@ -2005,6 +1997,34 @@
       document.getElementById('chekiGalleryModal').style.display = 'flex';
     }
 
+    // 👇 📖 全チェキ一覧ギャラリー（「僕のチェキ帳」ボタン用）を開く関数
+    function openAllChekiModal() {
+      const gridContainer = document.getElementById('allChekiGalleryGrid');
+      gridContainer.innerHTML = '';
+      
+      // 画像が登録されている履歴のみ抽出
+      const visitsWithImg = historyList.filter(v => v.chekiImg && v.chekiImg.trim() !== "");
+      
+      document.getElementById('allChekiModalTitle').innerText = `📖 僕のチェキ帳 (${visitsWithImg.length}枚)`;
+
+      if (visitsWithImg.length === 0) {
+        gridContainer.innerHTML = `<div style="grid-column: span 3; text-align:center; padding:20px; font-size:0.8rem; color:var(--light-text);">チェキ画像がまだ登録されていません</div>`;
+      } else {
+        // 新しい記録が上に来るようにリバース
+        [...visitsWithImg].reverse().forEach(v => {
+          const item = document.createElement('div');
+          item.className = 'cheki-grid-item';
+          item.innerHTML = `
+            <img src="${v.chekiImg}" alt="チェキ" onclick="openFullscreen('${v.chekiImg}')">
+            <div class="cheki-name-label">${v.name}</div>
+          `;
+          gridContainer.appendChild(item);
+        });
+      }
+
+      document.getElementById('allChekiModal').style.display = 'flex';
+    }
+
     // 🔍 フルスクリーン画像プレビューを開く
     function openFullscreen(url) {
       if (!url) return;
@@ -2021,48 +2041,6 @@
     function closeModal(id) {
       const modal = document.getElementById(id);
       if (modal) modal.style.display = 'none';
-    }
-
-    function runGacha() {
-      const activeList = Object.keys(castData).filter(name => castData[name].link && castData[name].link.trim() !== "");
-      if (activeList.length === 0) return alert("現在在籍中の推しメンがいません！（SNSプロフURLが登録された推しメンが対象です）");
-
-      const modal = document.getElementById('gachaModal');
-      const box = document.getElementById('rouletteBox');
-      const nameElem = document.getElementById('gachaResultName');
-      const titleElem = document.getElementById('gachaTitle');
-      const subElem = document.getElementById('gachaSub');
-      const closeBtn = document.getElementById('gachaCloseBtn');
-
-      box.classList.remove('winner');
-      titleElem.innerText = "🎰 本日の推しメン抽選中...";
-      subElem.innerText = "推しメンの中から選出中！";
-      closeBtn.disabled = true;
-      closeBtn.innerText = "抽選中...";
-      modal.style.display = 'flex';
-
-      const winner = activeList[Math.floor(Math.random() * activeList.length)];
-      let speed = 50;
-      let count = 0;
-      const maxCount = 25;
-
-      function shuffle() {
-        const tempName = activeList[Math.floor(Math.random() * activeList.length)];
-        nameElem.innerText = tempName;
-        count++;
-        if (count < maxCount) {
-          speed += count * 4;
-          setTimeout(shuffle, speed);
-        } else {
-          nameElem.innerText = winner;
-          box.classList.add('winner');
-          titleElem.innerText = "🎉 本日の推し確定！";
-          subElem.innerText = "運命の推しメンが選ばれました！";
-          closeBtn.disabled = false;
-          closeBtn.innerText = "決定！";
-        }
-      }
-      shuffle();
     }
 
     function calcMonthsAgo(lastYearStr, lastMonthStr) {
@@ -2207,7 +2185,7 @@
             const linkBtnHtml = isActive ? '<button class="link-btn" onclick="openLink(event, \'' + url + '\')">SNS</button>' : '';
             const copyBtnHtml = '<button class="copy-btn" onclick="openExportCastModal(event, \'' + c.name + '\')">📤 共有</button>';
             
-            // 💌裏面メッセージボタンの代わりに新設された「📖 チェキ帳」ボタン
+            // 個別の「📖 チェキ帳」ボタン
             const chekiBookBtnHtml = `<button class="cheki-book-btn" onclick="openChekiGalleryModal(event, '${c.name}')">📖 チェキ帳 (${c.visits.length})</button>`;
 
             const notesWithDate = c.visits.filter(v => v.visitNote && v.visitNote.trim() !== '').reverse();
