@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="pageTitle">推し活チェキ帳 [Cheki Book V2.4]</title>
+  <title id="pageTitle">推し活チェキ帳 [Cheki Book V2.7]</title>
   
   <style>
     /* 🎨 CSS変数：テーマ10種類のカラー定義 */
@@ -102,7 +102,7 @@
     }
     [data-theme="midnight"], [data-theme="velvet"], [data-theme="cyber"], [data-theme="mocha"], [data-theme="berry"] .home-greeting { background: rgba(0,0,0,0.6); }
 
-    /* マイ帳のデザイン系パーツ */
+    /* ダッシュボード & コントロール */
     .dashboard { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px; margin-bottom: 12px; box-shadow: var(--shadow); width: 100%; }
     .dash-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center; }
     .dash-item { background: var(--bg-color); padding: 6px; border-radius: 8px; border: 1px solid var(--border-color); }
@@ -127,8 +127,9 @@
     .legend-details summary { color: var(--primary-pink); font-size: 0.75rem; text-decoration: underline; cursor: pointer; list-style: none; }
     .legend-box { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 4px; background: var(--card-bg); padding: 8px; border-radius: var(--radius); margin-top: 6px; font-size: 0.7rem; border: 1px solid var(--border-color); text-align: left; }
 
-    .group-section { margin-bottom: 20px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px; box-shadow: var(--shadow); width: 100%; }
-    .group-category-title { font-size: 1rem; font-weight: bold; color: var(--accent-pink); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid var(--soft-pink); display: flex; align-items: center; gap: 6px; }
+    /* グループ別セクション＆カード */
+    .group-section { margin-bottom: 16px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px; box-shadow: var(--shadow); width: 100%; }
+    .group-category-title { font-size: 1rem; font-weight: bold; color: var(--accent-pink); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid var(--soft-pink); display: flex; align-items: center; justify-content: space-between; }
     .grid { display: flex; flex-direction: column; gap: 8px; width: 100%; }
 
     details.cast-card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border-color); border-left: 6px solid var(--primary-pink); overflow: hidden; width: 100%; transition: all 0.3s; }
@@ -143,6 +144,8 @@
     details[open] summary .arrow-icon { transform: rotate(180deg); color: var(--accent-pink); }
     .cast-info { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 
+    /* カテゴリ用小バッジ（グループ名横用） */
+    .cat-badge { font-size: 0.65rem; padding: 1px 6px; border-radius: 8px; font-weight: bold; background: var(--soft-pink); color: var(--accent-pink); border: 1px solid var(--primary-pink); white-space: nowrap; margin-left: 6px; }
     .old-name-badge { font-size: 0.65rem; background: rgba(150, 150, 150, 0.15); color: var(--light-text); padding: 1px 6px; border-radius: 6px; border: 1px solid var(--border-color); }
     .super-tag { font-size: 0.65rem; background: var(--gold-border); color: #fff; padding: 1px 5px; border-radius: 8px; font-weight: bold; }
     .badge-count { background: var(--badge-bg); color: var(--badge-color); font-weight: bold; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; }
@@ -283,7 +286,7 @@
     <div class="controls">
       <div class="search-row">
         <div class="search-box">
-          <input type="text" id="searchKeyword" placeholder="アイドル名やイベント名で検索..." oninput="render()">
+          <input type="text" id="searchKeyword" placeholder="推しメン名やグループ名で検索..." oninput="render()">
         </div>
         <button class="btn-gacha" onclick="openAllChekiModal()">📖 ギャラリー</button>
       </div>
@@ -427,7 +430,7 @@
     <div class="modal-content">
       <h3>❓ ガイド</h3>
       <div class="step-box"><h4>💭 ホーム</h4>自動でチェキが流れます。タップして裏書きを楽しんで！</div>
-      <div class="step-box"><h4>📸 マイ帳</h4>推し別や時系列で管理。画像アップロードはImgur APIで匿名送信されます。</div>
+      <div class="step-box"><h4>📸 マイ帳</h4>グループ名とカテゴリ小バッジでスッキリ管理できます。</div>
       <button class="close-btn" onclick="closeModal('helpModal')">閉じる</button>
     </div>
   </div>
@@ -441,7 +444,6 @@
         <div class="form-group"><label>日付対象</label><div id="editRecordHeader" style="font-size:0.85rem; font-weight:bold;"></div></div>
         <div class="form-group"><label>画像の種類</label><select id="editPhotoType"><option value="チェキ">📷 チェキ</option><option value="写メ">📱 写メ</option></select></div>
         
-        <!-- Imgurアップロード機能つき画像入力欄 -->
         <div class="form-group">
           <label>画像ファイルを選択 (自動Imgurアップロード)</label>
           <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
@@ -472,9 +474,29 @@
           <input type="text" id="addName" autocomplete="off" required oninput="showNameSuggestions(this.value)" onfocus="showNameSuggestions(this.value)">
           <div id="nameSuggestionBox" class="suggestion-box"></div>
         </div>
+
+        <div style="display:flex; gap:6px;">
+          <div class="form-group" style="flex:1;">
+            <label>カテゴリ</label>
+            <select id="addCategory" onchange="toggleCustomCategoryInput(this.value)">
+              <option value="アイドル">アイドル</option>
+              <option value="コンカフェ">コンカフェ</option>
+              <option value="その他">その他</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1; display:none;" id="customCatGroup">
+            <label>カテゴリ名</label>
+            <input type="text" id="addCustomCategory" placeholder="例: ライバー">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>グループ名 / 店名</label>
+          <input type="text" id="addGroupName" placeholder="例: 乃木坂46">
+        </div>
+
         <div class="form-group"><label>画像の種類</label><select id="addPhotoType"><option value="チェキ">📷 チェキ</option><option value="写メ">📱 写メ</option></select></div>
         
-        <!-- Imgurアップロード機能つき画像入力欄 -->
         <div class="form-group">
           <label>画像ファイルを選択 (自動Imgurアップロード)</label>
           <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
@@ -531,7 +553,7 @@
     }
 
     // ==========================================
-    // Imgur API 匿名アップロード機能
+    // Imgur API 匿名アップロード
     // ==========================================
     async function uploadImageToImgur(fileInput, targetUrlInputId, statusSpanId) {
       const file = fileInput.files[0];
@@ -548,7 +570,6 @@
         const response = await fetch('https://api.imgur.com/3/image', {
           method: 'POST',
           headers: {
-            // 匿名利用可能なデフォルトのオープンClient-ID
             'Authorization': 'Client-ID 546c25a59c58ad7'
           },
           body: formData
@@ -711,7 +732,7 @@
     }
 
     function exportJSONFile() {
-      const exportObject = { app: "推し活チェキ帳", version: "2.4", exportDate: new Date().toISOString(), userName: currentUserName, historyList: historyList, castData: castData };
+      const exportObject = { app: "推し活チェキ帳", version: "2.7", exportDate: new Date().toISOString(), userName: currentUserName, historyList: historyList, castData: castData };
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObject, null, 2));
       const a = document.createElement('a'); a.href = dataStr; a.download = `推し活チェキ帳_${currentUserName}_backup.json`;
       document.body.appendChild(a); a.click(); a.remove();
@@ -726,7 +747,9 @@
       }
     }
 
-    // レンダリング＆マイ帳
+    // ==========================================
+    // レンダリング＆マイ帳 (グループ別階層化 ＆ カテゴリバッジをグループ名横へ)
+    // ==========================================
     let currentView = 'cast', currentSort = 'count', currentFilter = 'all';
     function changeView(mode) { currentView = mode; document.getElementById('viewCast').className = 'btn-toggle' + (mode === 'cast' ? ' active' : ''); document.getElementById('viewTimeline').className = 'btn-toggle' + (mode === 'timeline' ? ' active' : ''); document.getElementById('sortGroup').style.display = (mode === 'cast') ? 'flex' : 'none'; render(); }
     function changeSort(sort) { currentSort = sort; document.getElementById('sortCount').className = 'btn-toggle' + (sort === 'count' ? ' active' : ''); document.getElementById('sortRecent').className = 'btn-toggle' + (sort === 'recent' ? ' active' : ''); document.getElementById('sortName').className = 'btn-toggle' + (sort === 'name' ? ' active' : ''); render(); }
@@ -774,63 +797,83 @@
       else if (currentSort === 'recent') list.sort((a,b) => b.lastIdx - a.lastIdx);
       else list.sort((a,b) => a.name.localeCompare(b.name, 'ja'));
 
-      const grouped = {};
+      const groupedByGroup = {};
       list.forEach(c => {
-        const info = castData[c.name] || {}; const cat = info.category || 'その他'; const grp = info.group || '一般・フリー';
-        if(!grouped[cat]) grouped[cat] = {}; if(!grouped[cat][grp]) grouped[cat][grp] = [];
-        grouped[cat][grp].push(c);
+        const info = castData[c.name] || {};
+        const grpName = info.group && info.group.trim() !== "" ? info.group : '一般・フリー';
+        if (!groupedByGroup[grpName]) groupedByGroup[grpName] = [];
+        groupedByGroup[grpName].push(c);
       });
 
-      ['アイドルグループ', 'コンカフェ', 'その他'].forEach(cat => {
-        if(!grouped[cat]) return;
-        const catSec = document.createElement('div'); catSec.className = 'group-section';
-        catSec.innerHTML = `<div class="group-category-title">${cat === 'コンカフェ' ? '☕️' : (cat==='その他'?'🌟':'🎵')} ${cat}</div>`;
-        
-        Object.keys(grouped[cat]).forEach(grp => {
-          const grpSub = document.createElement('div'); grpSub.style.cssText = "font-size:0.85rem; font-weight:bold; margin:8px 0 4px 4px;"; grpSub.innerText = `📂 ${grp}`;
-          catSec.appendChild(grpSub);
-          const grid = document.createElement('div'); grid.className = 'grid';
+      Object.keys(groupedByGroup).forEach(grpName => {
+        const groupCasts = groupedByGroup[grpName];
+        const groupSec = document.createElement('div');
+        groupSec.className = 'group-section';
 
-          grouped[cat][grp].forEach(c => {
-            const info = castData[c.name] || {};
-            const details = document.createElement('details');
-            details.className = 'cast-card' + (c.favCount >= 1 ? ' favorite' : '');
-            if(info.color) details.style.borderLeftColor = info.color;
+        const totalGroupVisits = groupCasts.reduce((sum, c) => sum + c.visits.length, 0);
 
-            let rowsHtml = '';
-            c.visits.forEach(v => {
-              const typeIcon = (v.photoType === '写メ') ? '📱' : '📷';
-              const imgPreview = v.chekiImg ? `<button class="photo-gallery-btn" onclick="openFlipModal(${v.originalIndex})">${typeIcon} 画像</button>` : '';
-              rowsHtml += `
-                <div class="history-row">
-                  <span class="history-date">${v.year.slice(2)}年 ${v.month}</span>
-                  <div style="display:flex; align-items:center; gap:6px;">
-                    ${imgPreview} <span class="history-flags">${v.flags||''}</span>
-                    <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${v.originalIndex})"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
-                  </div>
-                </div>`;
-            });
+        // 代表するキャストのカテゴリを取得（グループ全体に適用）
+        const firstInfo = castData[groupCasts[0].name] || {};
+        let catText = firstInfo.category || 'アイドル';
+        if(catText === 'その他' && firstInfo.customCategory) catText = firstInfo.customCategory;
 
-            details.innerHTML = `
-              <summary class="card-btn">
-                <div class="cast-info"><span class="arrow-icon">▼</span><span>${c.name}</span>${info.oldName?`<span class="old-name-badge">旧:${info.oldName}</span>`:''}${c.visits.length>=5?'<span class="super-tag">大推し</span>':''}</div>
-                <span class="badge-count">${c.visits.length}回</span>
-              </summary>
-              <div class="anim-wrapper"><div class="anim-inner"><div class="card-body">
-                <div class="style-row"><div class="style-pill"><span class="style-pill-label">カラー</span><span class="style-pill-val">${info.color||'未設定'}</span></div></div>
-                <div class="card-middle-row">
-                  <div class="notes-box">${info.notes || 'メモなし'}</div>
-                  <div class="btn-action-group">
-                    <button class="cheki-book-btn" onclick="openChekiGalleryModal(event, '${c.name}')">📖 ギャラリー</button>
-                  </div>
+        groupSec.innerHTML = `
+          <div class="group-category-title">
+            <div style="display:flex; align-items:center;">
+              <span>${grpName}</span>
+              <span class="cat-badge">${catText}</span>
+            </div>
+            <span style="font-size:0.75rem; color:var(--light-text); font-weight:normal;">全 ${totalGroupVisits} 枚</span>
+          </div>`;
+
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+
+        groupCasts.forEach(c => {
+          const info = castData[c.name] || {};
+          const details = document.createElement('details');
+          details.className = 'cast-card' + (c.favCount >= 1 ? ' favorite' : '');
+          if(info.color) details.style.borderLeftColor = info.color;
+
+          let rowsHtml = '';
+          c.visits.forEach(v => {
+            const typeIcon = (v.photoType === '写メ') ? '📱' : '📷';
+            const imgPreview = v.chekiImg ? `<button class="photo-gallery-btn" onclick="openFlipModal(${v.originalIndex})">${typeIcon} 画像</button>` : '';
+            rowsHtml += `
+              <div class="history-row">
+                <span class="history-date">${v.year.slice(2)}年 ${v.month}</span>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  ${imgPreview} <span class="history-flags">${v.flags||''}</span>
+                  <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${v.originalIndex})"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
                 </div>
-                ${rowsHtml}
-              </div></div></div>`;
-            grid.appendChild(details);
+              </div>`;
           });
-          catSec.appendChild(grid);
+
+          details.innerHTML = `
+            <summary class="card-btn">
+              <div class="cast-info">
+                <span class="arrow-icon">▼</span>
+                <span>${c.name}</span>
+                ${info.oldName?`<span class="old-name-badge">旧:${info.oldName}</span>`:''}
+                ${c.visits.length>=5?'<span class="super-tag">大推し</span>':''}
+              </div>
+              <span class="badge-count">${c.visits.length}回</span>
+            </summary>
+            <div class="anim-wrapper"><div class="anim-inner"><div class="card-body">
+              <div class="style-row"><div class="style-pill"><span class="style-pill-label">カラー</span><span class="style-pill-val">${info.color||'未設定'}</span></div></div>
+              <div class="card-middle-row">
+                <div class="notes-box">${info.notes || 'メモなし'}</div>
+                <div class="btn-action-group">
+                  <button class="cheki-book-btn" onclick="openChekiGalleryModal(event, '${c.name}')">📖 ギャラリー</button>
+                </div>
+              </div>
+              ${rowsHtml}
+            </div></div></div>`;
+          grid.appendChild(details);
         });
-        target.appendChild(catSec);
+
+        groupSec.appendChild(grid);
+        target.appendChild(groupSec);
       });
     }
 
@@ -907,7 +950,13 @@
       }
     }
 
-    // 追加・編集
+    // 追加・編集系
+    function toggleCustomCategoryInput(val) {
+      const group = document.getElementById('customCatGroup');
+      if (val === 'その他') group.style.display = 'flex';
+      else group.style.display = 'none';
+    }
+
     function openAddModal() {
       const d = new Date(); document.getElementById('addYear').value = d.getFullYear(); document.getElementById('addMonth').value = (d.getMonth()+1)+'月';
       document.getElementById('addCheckImg').value = '';
@@ -933,13 +982,26 @@
     function saveNewRecord(e) {
       e.preventDefault();
       const pType = document.getElementById('addPhotoType') ? document.getElementById('addPhotoType').value : 'チェキ';
+      const cat = document.getElementById('addCategory').value;
+      const customCat = document.getElementById('addCustomCategory') ? document.getElementById('addCustomCategory').value : '';
+      const grp = document.getElementById('addGroupName') ? document.getElementById('addGroupName').value : '';
+
       const rec = {
         year: document.getElementById('addYear').value, month: document.getElementById('addMonth').value,
         name: document.getElementById('addName').value, chekiImg: document.getElementById('addCheckImg').value,
         photoType: pType, flags: document.getElementById('addFlags').value, visitNote: document.getElementById('addVisitNote').value
       };
+      
       historyList.push(rec);
-      if(!castData[rec.name]) castData[rec.name] = { category: 'その他', group: '', color: '' };
+      
+      if(!castData[rec.name]) {
+        castData[rec.name] = { category: cat, customCategory: customCat, group: grp, color: '' };
+      } else {
+        if(cat) castData[rec.name].category = cat;
+        if(customCat) castData[rec.name].customCategory = customCat;
+        if(grp) castData[rec.name].group = grp;
+      }
+
       saveData(); closeModal('addModal'); render(); alert('保存しました！');
     }
 
