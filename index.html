@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="pageTitle">推し活チェキ帳 [Cheki Book V2.7]</title>
-  
+  <title id="pageTitle">推し活チェキ帳 [Cheki Book V3.0]</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
   <style>
     /* 🎨 CSS変数：テーマ10種類のカラー定義 */
     :root {
@@ -13,6 +14,8 @@
       --shadow: 0 4px 15px rgba(255, 133, 162, 0.1); --radius: 12px;
       --badge-bg: var(--soft-pink); --badge-color: var(--accent-pink);
       --gold-bg-start: #fff9e6; --gold-bg-end: #fff0c2; --gold-border: #f3c642; --gold-text: #8a6200;
+      --chart-line-amount: #f72585; --chart-line-count: #4dabf7;
+      --rank-c1: #ff85a2; --rank-c2: #ffb347; --rank-c3: #63c7b2; --rank-c4: #a389d4; --rank-c5: #6fb1fc; --rank-cx: #d8d0d2;
     }
 
     [data-theme="midnight"] { --bg-color: #121218; --card-bg: #1a1a24; --primary-pink: #ff6b8b; --soft-pink: #2a1f2d; --accent-pink: #ff4081; --text-color: #e2e2e8; --light-text: #9a9aab; --border-color: #2e2e3d; --shadow: 0 4px 15px rgba(0, 0, 0, 0.5); --badge-bg: #3a2233; --badge-color: #ff6b8b; --gold-bg-start: #2e2612; --gold-bg-end: #1f190a; --gold-border: #d4af37; --gold-text: #ffd700; }
@@ -55,16 +58,16 @@
     .floating-nav {
       position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
       background: var(--card-bg); border: 1px solid var(--border-color);
-      padding: 10px 24px; border-radius: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-      display: flex; gap: 25px; z-index: 100; backdrop-filter: blur(10px);
+      padding: 10px 18px; border-radius: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      display: flex; gap: 18px; z-index: 100; backdrop-filter: blur(10px);
     }
     .nav-item {
-      background: none; border: none; font-size: 0.75rem; font-weight: bold;
+      background: none; border: none; font-size: 0.7rem; font-weight: bold;
       color: var(--light-text); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px;
       transition: all 0.2s;
     }
     .nav-item.active { color: var(--accent-pink); transform: scale(1.1); }
-    .nav-icon { font-size: 1.2rem; }
+    .nav-icon { font-size: 1.15rem; }
 
     .fab-add {
       position: fixed; bottom: 24px; right: 20px; width: 56px; height: 56px; border-radius: 28px;
@@ -100,7 +103,7 @@
       padding: 24px 30px; border-radius: 20px; box-shadow: var(--shadow); border: 1px solid var(--border-color);
       text-align: center; width: 85%; max-width: 320px;
     }
-    [data-theme="midnight"], [data-theme="velvet"], [data-theme="cyber"], [data-theme="mocha"], [data-theme="berry"] .home-greeting { background: rgba(0,0,0,0.6); }
+    [data-theme="midnight"] .home-greeting, [data-theme="velvet"] .home-greeting, [data-theme="cyber"] .home-greeting, [data-theme="mocha"] .home-greeting, [data-theme="berry"] .home-greeting { background: rgba(0,0,0,0.6); }
 
     /* ダッシュボード & コントロール */
     .dashboard { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px; margin-bottom: 12px; box-shadow: var(--shadow); width: 100%; }
@@ -162,8 +165,16 @@
     .cheki-book-btn { background: var(--soft-pink); font-weight: bold; }
     .photo-gallery-btn { background: linear-gradient(135deg, var(--soft-pink), var(--card-bg)); font-weight: bold; }
 
+    .history-row-wrap { width: 100%; }
     .history-row { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 6px; font-size: 0.8rem; width: 100%; }
     .edit-icon-btn { background: none; border: none; cursor: pointer; padding: 2px 4px; display: inline-flex; align-items: center; justify-content: center; color: var(--light-text); }
+
+    /* 詳細（金額・イベント・会場）トグル */
+    .info-toggle-btn { background: var(--soft-pink); border: 1px solid var(--primary-pink); color: var(--accent-pink); border-radius: 8px; width: 18px; height: 18px; font-size: 0.65rem; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; line-height: 1; padding: 0; }
+    .row-detail-panel { display: none; margin-top: 4px; padding: 6px 10px; background: var(--bg-color); border: 1px dashed var(--border-color); border-radius: 8px; font-size: 0.72rem; color: var(--text-color); }
+    .row-detail-panel.open { display: flex; flex-wrap: wrap; gap: 10px; }
+    .row-detail-panel span { white-space: nowrap; }
+    .row-detail-panel .rd-label { color: var(--light-text); margin-right: 2px; }
 
     /* 時系列UI */
     .month-section { margin-bottom: 16px; width: 100%; }
@@ -196,6 +207,12 @@
     .suggestion-box { position: absolute; top: 100%; left: 0; width: 100%; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: var(--shadow); max-height: 150px; overflow-y: auto; z-index: 1000; display: none; margin-top: 4px; }
     .suggestion-item { padding: 8px 10px; font-size: 0.85rem; cursor: pointer; border-bottom: 1px solid var(--border-color); }
 
+    /* フォーム内の「詳細（金額・イベント・会場）」折りたたみ */
+    details.detail-fold { border: 1px dashed var(--border-color); border-radius: 10px; background: var(--bg-color); width: 100%; }
+    details.detail-fold summary { padding: 8px 10px; font-size: 0.78rem; font-weight: bold; color: var(--accent-pink); cursor: pointer; list-style: none; display: flex; align-items: center; gap: 4px; }
+    details.detail-fold summary::-webkit-details-marker { display: none; }
+    details.detail-fold .fold-body { padding: 4px 10px 10px; display: flex; flex-direction: column; gap: 8px; }
+
     /* 3Dフリップモーダル */
     .flip-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); justify-content: center; align-items: center; z-index: 2000; }
     .flip-container { perspective: 1200px; width: 85vw; max-width: 400px; aspect-ratio: 3/4; cursor: pointer; }
@@ -207,6 +224,7 @@
     .flip-back { background: #fdfbfb; transform: rotateY(180deg); padding: 24px; color: #333; display: flex; flex-direction: column; gap: 12px; background-image: repeating-linear-gradient(transparent, transparent 27px, #e0e0e0 27px, #e0e0e0 28px); background-position: 0 24px; }
     .flip-back-header { font-size: 1.1rem; font-weight: bold; border-bottom: 2px dashed #ccc; padding-bottom: 8px;}
     .flip-back-note { font-size: 0.95rem; line-height: 1.8; font-family: 'Brush Script MT', 'Comic Sans MS', cursive, sans-serif; flex-grow: 1; text-align: left; }
+    .flip-back-meta { font-size: 0.78rem; color: #666; display: flex; flex-wrap: wrap; gap: 8px; font-family: -apple-system, sans-serif; }
     .flip-hint { position: absolute; bottom: -30px; width: 100%; text-align: center; color: rgba(255,255,255,0.7); font-size: 0.8rem; }
 
     /* ギャラリー */
@@ -225,6 +243,31 @@
     .settings-acc-body { padding: 10px 12px 12px; border-top: 1px dashed var(--border-color); font-size: 0.8rem; width: 100%; }
     .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; }
     .theme-item-btn { padding: 8px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--card-bg); color: var(--text-color); font-size: 0.75rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+
+    /* ===== 統計ダッシュボード（Pro） ===== */
+    #viewDashboard { width: 100%; }
+    .month-select-row { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; margin-bottom: 4px; width: 100%; }
+    .stat-section { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 14px; margin-bottom: 14px; box-shadow: var(--shadow); width: 100%; }
+    .stat-section-title { font-size: 0.9rem; font-weight: bold; color: var(--accent-pink); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid var(--soft-pink); display: flex; align-items: center; gap: 6px; }
+    .stat-grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    @media (min-width:480px){ .stat-grid-4 { grid-template-columns: repeat(4, 1fr); } }
+    .stat-card { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px; text-align: center; }
+    .stat-card-lbl { font-size: 0.68rem; color: var(--light-text); margin-bottom: 2px; }
+    .stat-card-val { font-size: 1.2rem; font-weight: bold; color: var(--accent-pink); }
+    .stat-card-sub { font-size: 0.62rem; color: var(--light-text); margin-top: 2px; }
+    .chart-wrap { position: relative; width: 100%; height: 200px; margin-top: 6px; }
+    .chart-wrap.donut { height: 220px; }
+    .rank-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .rank-row { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; }
+    .rank-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .rank-name { font-weight: bold; flex: 1; }
+    .rank-sub { font-size: 0.68rem; color: var(--light-text); }
+    .rank-pct { font-weight: bold; color: var(--accent-pink); font-size: 0.8rem; min-width: 42px; text-align: right; }
+    .top-list-row { display: flex; align-items: center; gap: 10px; padding: 7px 8px; border-radius: 8px; background: var(--bg-color); border: 1px solid var(--border-color); font-size: 0.78rem; margin-bottom: 6px; }
+    .top-list-rank { font-weight: bold; color: var(--accent-pink); width: 22px; flex-shrink: 0; }
+    .top-list-name { font-weight: bold; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .top-list-meta { color: var(--light-text); font-size: 0.68rem; white-space: nowrap; }
+    .dash-empty { text-align: center; color: var(--light-text); font-size: 0.8rem; padding: 20px 10px; }
   </style>
 </head>
 <body>
@@ -249,6 +292,9 @@
     </button>
     <button class="nav-item" id="nav-my" onclick="switchMainTab('my')">
       <span class="nav-icon">📸</span><span>マイ帳</span>
+    </button>
+    <button class="nav-item" id="nav-dashboard" onclick="switchMainTab('dashboard')">
+      <span class="nav-icon">📊</span><span>統計</span>
     </button>
     <button class="nav-item" id="nav-shared" onclick="switchMainTab('shared')">
       <span class="nav-icon">👥</span><span>共有 (<span id="sharedCount">0</span>)</span>
@@ -312,10 +358,20 @@
       <div class="legend-box">
         <div>🈠 初チェキ</div><div>🆂 サイン</div><div>✈ 遠征</div><div>🎂 生誕祭</div>
         <div>💖 落書き</div><div>㋑ 衣装</div><div>🎸 対バン</div><div>☕️ メイド</div>
+        <div>ⓘ 詳細（金額など）</div>
       </div>
     </details>
 
     <div id="mainContent"></div>
+  </div>
+
+  <!-- 統計ダッシュボード（Pro） -->
+  <div id="viewDashboard" class="tab-content">
+    <div class="controls" style="margin-bottom:10px;">
+      <div style="font-size:0.78rem; font-weight:bold; color:var(--accent-pink); margin-bottom:2px;">📅 対象月を選択</div>
+      <div class="month-select-row" id="dashMonthRow"></div>
+    </div>
+    <div id="dashboardContent"></div>
   </div>
 
   <!-- 共有されたチェキ -->
@@ -338,6 +394,7 @@
             <div id="flipName" style="color:var(--accent-pink);">---</div>
           </div>
           <div class="flip-back-note" id="flipNote">メモがありません。</div>
+          <div class="flip-back-meta" id="flipMeta"></div>
           <div style="font-size:0.75rem; font-weight:bold; color:#0ca678;" id="flipFlags"></div>
         </div>
       </div>
@@ -430,7 +487,8 @@
     <div class="modal-content">
       <h3>❓ ガイド</h3>
       <div class="step-box"><h4>💭 ホーム</h4>自動でチェキが流れます。タップして裏書きを楽しんで！</div>
-      <div class="step-box"><h4>📸 マイ帳</h4>グループ名とカテゴリ小バッジでスッキリ管理できます。</div>
+      <div class="step-box"><h4>📸 マイ帳</h4>グループ名とカテゴリ小バッジでスッキリ管理できます。各記録の「ⓘ」を押すと金額・イベント名・会場が見られます。</div>
+      <div class="step-box"><h4>📊 統計</h4>月ごとの支出・撮影枚数、推し別の支出ランキング、イベント別／会場別の集計を確認できます。</div>
       <button class="close-btn" onclick="closeModal('helpModal')">閉じる</button>
     </div>
   </div>
@@ -455,6 +513,17 @@
 
         <div class="form-group"><label>フラグ</label><input type="text" id="editFlags"></div>
         <div class="form-group"><label>メモ</label><textarea id="editVisitNote" rows="2"></textarea></div>
+
+        <details class="detail-fold">
+          <summary>💰 詳細（金額・イベント・会場）を追加／編集</summary>
+          <div class="fold-body">
+            <div class="form-group"><label>金額（円）</label><input type="number" id="editAmount" min="0" placeholder="例: 1500"></div>
+            <div class="form-group"><label>イベント名</label><input type="text" id="editEventName" placeholder="例: ワンマンライブ、チェキ会"></div>
+            <div class="form-group"><label>会場名</label><input type="text" id="editVenue" placeholder="例: 原宿ホール"></div>
+            <div class="form-group"><label>日（任意・統計の精度が上がります）</label><input type="number" id="editDay" min="1" max="31" placeholder="例: 22"></div>
+          </div>
+        </details>
+
         <div style="display:flex; gap:8px;"><button type="submit" class="close-btn" style="flex:1;">更新</button><button type="button" class="close-btn" onclick="closeModal('editRecordModal')" style="background:#888; flex:1;">取消</button></div>
       </form>
     </div>
@@ -508,6 +577,17 @@
 
         <div class="form-group"><label>フラグ</label><input type="text" id="addFlags" placeholder="🆂 💖 など"></div>
         <div class="form-group"><label>メモ</label><textarea id="addVisitNote" rows="2"></textarea></div>
+
+        <details class="detail-fold">
+          <summary>💰 詳細（金額・イベント・会場）を記入（任意・チェキ1枚ごと）</summary>
+          <div class="fold-body">
+            <div class="form-group"><label>金額（円）</label><input type="number" id="addAmount" min="0" placeholder="例: 1500"></div>
+            <div class="form-group"><label>イベント名</label><input type="text" id="addEventName" placeholder="例: ワンマンライブ、チェキ会"></div>
+            <div class="form-group"><label>会場名</label><input type="text" id="addVenue" placeholder="例: 原宿ホール"></div>
+            <div class="form-group"><label>日（任意・統計の精度が上がります）</label><input type="number" id="addDay" min="1" max="31" placeholder="例: 22"></div>
+          </div>
+        </details>
+
         <div style="display:flex; gap:8px;"><button type="submit" class="close-btn" style="flex:1;">保存</button><button type="button" class="close-btn" onclick="closeModal('addModal')" style="background:#888; flex:1;">取消</button></div>
       </form>
     </div>
@@ -523,6 +603,10 @@
 
     let activeIndivVisits = [];
     let activeAllVisits = [];
+
+    let dashSelectedMonthKey = null;
+    let monthlyChartInstance = null;
+    let rankingChartInstance = null;
 
     function initUserData() {
       applyTheme(currentTheme);
@@ -601,6 +685,7 @@
       const homeView = document.getElementById('viewHome');
       const myView = document.getElementById('viewMy');
       const sharedView = document.getElementById('viewShared');
+      const dashView = document.getElementById('viewDashboard');
       const headerTitle = document.getElementById('headerTitle');
 
       if(type === 'home') {
@@ -608,19 +693,25 @@
         headerTitle.classList.add('hidden');
         myView.style.display = 'none';
         sharedView.style.display = 'none';
+        dashView.style.display = 'none';
         startFloatingAnimation();
       } else {
         homeView.classList.remove('active');
         headerTitle.classList.remove('hidden');
         clearInterval(bubbleInterval);
 
+        myView.style.display = 'none';
+        sharedView.style.display = 'none';
+        dashView.style.display = 'none';
+
         if(type === 'my') {
           myView.style.display = 'block';
-          sharedView.style.display = 'none';
         } else if (type === 'shared') {
-          myView.style.display = 'none';
           sharedView.style.display = 'block';
           renderSharedArea();
+        } else if (type === 'dashboard') {
+          dashView.style.display = 'block';
+          renderDashboard();
         }
 
         setTimeout(() => {
@@ -690,21 +781,47 @@
       const card = document.getElementById('flipCard');
       card.classList.remove('is-flipped');
       document.getElementById('flipImg').src = record.chekiImg;
-      document.getElementById('flipDate').innerText = `${record.year} ${record.month}`;
+      document.getElementById('flipDate').innerText = `${record.year} ${record.month}` + (record.day ? ` ${record.day}日` : '');
       document.getElementById('flipName').innerText = record.name;
       document.getElementById('flipNote').innerText = record.visitNote || 'メモはありません';
       document.getElementById('flipFlags').innerText = record.flags || '';
+
+      const metaBits = [];
+      if(record.amount) metaBits.push(`💰 ¥${Number(record.amount).toLocaleString()}`);
+      if(record.eventName) metaBits.push(`🎤 ${record.eventName}`);
+      if(record.venue) metaBits.push(`📍 ${record.venue}`);
+      document.getElementById('flipMeta').innerText = metaBits.join('　');
+
       overlay.style.display = 'flex';
     }
     function toggleFlip(event) { event.stopPropagation(); document.getElementById('flipCard').classList.toggle('is-flipped'); }
     function closeFlipModal(event) { document.getElementById('flipModal').style.display = 'none'; }
+
+    // 記録ごとの詳細（金額・イベント・会場）の開閉トグル
+    function toggleRowDetail(idx) {
+      const panel = document.getElementById('rd-' + idx);
+      if(!panel) return;
+      panel.classList.toggle('open');
+    }
+
+    function buildRowDetailHTML(v) {
+      const hasDetail = v.amount || v.eventName || v.venue;
+      if(!hasDetail) return { btn: '', panel: '' };
+      const btn = `<button class="info-toggle-btn" title="詳細を見る" onclick="toggleRowDetail(${v.originalIndex})">ⓘ</button>`;
+      const bits = [];
+      if(v.amount) bits.push(`<span><span class="rd-label">💰金額</span>¥${Number(v.amount).toLocaleString()}</span>`);
+      if(v.eventName) bits.push(`<span><span class="rd-label">🎤イベント</span>${v.eventName}</span>`);
+      if(v.venue) bits.push(`<span><span class="rd-label">📍会場</span>${v.venue}</span>`);
+      const panel = `<div class="row-detail-panel" id="rd-${v.originalIndex}">${bits.join('')}</div>`;
+      return { btn, panel };
+    }
 
     // モーダル・テーマ制御
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function openSettingsModal() { document.getElementById('inputUserName').value = currentUserName === '推し活民' ? '' : currentUserName; document.getElementById('settingsModal').style.display = 'flex'; }
     function openHelpModal() { document.getElementById('helpModal').style.display = 'flex'; }
     function applyTheme(themeName) { currentTheme = themeName; if(themeName === 'default') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', themeName); localStorage.setItem('app_theme', themeName); }
-    function setTheme(themeName) { applyTheme(themeName); }
+    function setTheme(themeName) { applyTheme(themeName); renderDashboard(); }
 
     function triggerJSONFileInput() { document.getElementById('jsonFileInput').click(); }
     function triggerSharedFileInput() { document.getElementById('sharedFileInput').click(); }
@@ -732,7 +849,7 @@
     }
 
     function exportJSONFile() {
-      const exportObject = { app: "推し活チェキ帳", version: "2.7", exportDate: new Date().toISOString(), userName: currentUserName, historyList: historyList, castData: castData };
+      const exportObject = { app: "推し活チェキ帳", version: "3.0", exportDate: new Date().toISOString(), userName: currentUserName, historyList: historyList, castData: castData };
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObject, null, 2));
       const a = document.createElement('a'); a.href = dataStr; a.download = `推し活チェキ帳_${currentUserName}_backup.json`;
       document.body.appendChild(a); a.click(); a.remove();
@@ -839,13 +956,18 @@
           c.visits.forEach(v => {
             const typeIcon = (v.photoType === '写メ') ? '📱' : '📷';
             const imgPreview = v.chekiImg ? `<button class="photo-gallery-btn" onclick="openFlipModal(${v.originalIndex})">${typeIcon} 画像</button>` : '';
+            const { btn: infoBtn, panel: infoPanel } = buildRowDetailHTML(v);
             rowsHtml += `
-              <div class="history-row">
-                <span class="history-date">${v.year.slice(2)}年 ${v.month}</span>
-                <div style="display:flex; align-items:center; gap:6px;">
-                  ${imgPreview} <span class="history-flags">${v.flags||''}</span>
-                  <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${v.originalIndex})"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+              <div class="history-row-wrap">
+                <div class="history-row">
+                  <span class="history-date">${v.year.slice(2)}年 ${v.month}</span>
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    ${imgPreview} <span class="history-flags">${v.flags||''}</span>
+                    ${infoBtn}
+                    <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${v.originalIndex})"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+                  </div>
                 </div>
+                ${infoPanel}
               </div>`;
           });
 
@@ -896,12 +1018,13 @@
           const details = document.createElement('details'); details.className = 'timeline-item';
           const typeIcon = (i.photoType === '写メ') ? '📱' : '📷';
           const imgBtn = i.chekiImg ? `<button class="photo-gallery-btn" onclick="openFlipModal(${i.originalIndex})">${typeIcon} 画像</button>` : '';
+          const { btn: infoBtn, panel: infoPanel } = buildRowDetailHTML(i);
           details.innerHTML = `
             <summary class="timeline-summary">
               <div style="display:flex; align-items:center; gap:8px;"><span class="arrow-icon">▼</span><strong>${i.name}</strong></div>
-              <div style="display:flex; align-items:center; gap:6px;">${imgBtn} <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${i.originalIndex})"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button></div>
+              <div style="display:flex; align-items:center; gap:6px;">${imgBtn} ${infoBtn} <button class="edit-icon-btn" onclick="openEditRecordModal(event, ${i.originalIndex})"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button></div>
             </summary>
-            <div class="timeline-body">📝 ${i.visitNote || 'メモなし'}</div>`;
+            <div class="timeline-body">📝 ${i.visitNote || 'メモなし'} ${infoPanel}</div>`;
           sec.appendChild(details);
         });
         target.appendChild(sec);
@@ -962,6 +1085,10 @@
       document.getElementById('addCheckImg').value = '';
       document.getElementById('addUploadStatus').innerText = '未選択';
       document.getElementById('addUploadStatus').style.color = 'var(--light-text)';
+      document.getElementById('addAmount').value = '';
+      document.getElementById('addEventName').value = '';
+      document.getElementById('addVenue').value = '';
+      document.getElementById('addDay').value = '';
       document.getElementById('addModal').style.display = 'flex';
     }
 
@@ -988,8 +1115,12 @@
 
       const rec = {
         year: document.getElementById('addYear').value, month: document.getElementById('addMonth').value,
+        day: document.getElementById('addDay').value || '',
         name: document.getElementById('addName').value, chekiImg: document.getElementById('addCheckImg').value,
-        photoType: pType, flags: document.getElementById('addFlags').value, visitNote: document.getElementById('addVisitNote').value
+        photoType: pType, flags: document.getElementById('addFlags').value, visitNote: document.getElementById('addVisitNote').value,
+        amount: document.getElementById('addAmount').value || '',
+        eventName: document.getElementById('addEventName').value || '',
+        venue: document.getElementById('addVenue').value || ''
       };
       
       historyList.push(rec);
@@ -1002,7 +1133,7 @@
         if(grp) castData[rec.name].group = grp;
       }
 
-      saveData(); closeModal('addModal'); render(); alert('保存しました！');
+      saveData(); closeModal('addModal'); render(); renderDashboard(); alert('保存しました！');
     }
 
     function openEditRecordModal(event, index) {
@@ -1016,6 +1147,10 @@
       document.getElementById('editUploadStatus').style.color = 'var(--light-text)';
       document.getElementById('editFlags').value = rec.flags || '';
       document.getElementById('editVisitNote').value = rec.visitNote || '';
+      document.getElementById('editAmount').value = rec.amount || '';
+      document.getElementById('editEventName').value = rec.eventName || '';
+      document.getElementById('editVenue').value = rec.venue || '';
+      document.getElementById('editDay').value = rec.day || '';
       document.getElementById('editRecordModal').style.display = 'flex';
     }
 
@@ -1028,12 +1163,248 @@
         rec.chekiImg = document.getElementById('editCheckImg').value; 
         rec.flags = document.getElementById('editFlags').value; 
         rec.visitNote = document.getElementById('editVisitNote').value;
-        saveData(); render(); closeModal('editRecordModal');
+        rec.amount = document.getElementById('editAmount').value || '';
+        rec.eventName = document.getElementById('editEventName').value || '';
+        rec.venue = document.getElementById('editVenue').value || '';
+        rec.day = document.getElementById('editDay').value || '';
+        saveData(); render(); renderDashboard(); closeModal('editRecordModal');
       }
     }
 
     function saveUserName(e) { e.preventDefault(); currentUserName = document.getElementById('inputUserName').value; document.getElementById('homeUserName').innerText = currentUserName; document.getElementById('currentUserNameDisplay').innerText = currentUserName; saveData(); closeModal('settingsModal'); }
-    function resetData() { if(confirm("リセットしますか？")){ localStorage.clear(); historyList=[]; castData=[]; render(); } }
+    function resetData() { if(confirm("リセットしますか？")){ localStorage.clear(); historyList=[]; castData=[]; render(); renderDashboard(); } }
+
+    // ==========================================
+    // 統計ダッシュボード（Pro）
+    // ==========================================
+    function getMonthKey(v) {
+      const y = parseInt(v.year, 10) || 0;
+      const m = parseInt(v.month, 10) || 0;
+      return `${y}-${String(m).padStart(2,'0')}`;
+    }
+    function getMonthLabel(key) {
+      const [y,m] = key.split('-');
+      return `${y}年${parseInt(m,10)}月`;
+    }
+    function getUniqueDayKey(v, idx) {
+      return v.day ? `${v.year}-${v.month}-${v.day}` : `single-${idx}`;
+    }
+
+    function renderDashboard() {
+      const wrap = document.getElementById('dashboardContent');
+      const monthRow = document.getElementById('dashMonthRow');
+      if(!wrap || !monthRow) return;
+
+      if(historyList.length === 0) {
+        monthRow.innerHTML = '';
+        wrap.innerHTML = '<div class="dash-empty">記録がまだありません。<br>「＋」から記録を追加すると、ここに統計が表示されます。</div>';
+        return;
+      }
+
+      // 月一覧（新しい順）
+      const monthKeys = [...new Set(historyList.map(getMonthKey))].sort().reverse();
+      if(!dashSelectedMonthKey || !monthKeys.includes(dashSelectedMonthKey)) dashSelectedMonthKey = monthKeys[0];
+
+      monthRow.innerHTML = monthKeys.map(k =>
+        `<div class="ftag ${k===dashSelectedMonthKey?'active':''}" onclick="selectDashMonth('${k}')">${getMonthLabel(k)}</div>`
+      ).join('');
+
+      const monthRecords = historyList.filter(v => getMonthKey(v) === dashSelectedMonthKey);
+
+      // --- 今月のサマリー ---
+      const count = monthRecords.length;
+      const amountSum = monthRecords.reduce((s,v) => s + (Number(v.amount)||0), 0);
+      const avgUnit = count > 0 ? Math.round(amountSum / count) : 0;
+      const dayKeys = new Set(monthRecords.map((v,i) => getUniqueDayKey(v, i)));
+
+      let html = `
+        <div class="stat-section">
+          <div class="stat-section-title">✨ ${getMonthLabel(dashSelectedMonthKey)}のサマリー</div>
+          <div class="stat-grid-4">
+            <div class="stat-card"><div class="stat-card-lbl">📷 撮影枚数</div><div class="stat-card-val">${count}枚</div></div>
+            <div class="stat-card"><div class="stat-card-lbl">💰 支出合計</div><div class="stat-card-val">¥${amountSum.toLocaleString()}</div></div>
+            <div class="stat-card"><div class="stat-card-lbl">📈 平均単価</div><div class="stat-card-val">¥${avgUnit.toLocaleString()}</div></div>
+            <div class="stat-card"><div class="stat-card-lbl">📅 撮影日数</div><div class="stat-card-val">${dayKeys.size}日</div></div>
+          </div>
+        </div>
+
+        <div class="stat-section">
+          <div class="stat-section-title">📈 月別推移（直近12か月）</div>
+          <div class="chart-wrap"><canvas id="monthlyTrendChart"></canvas></div>
+        </div>
+
+        <div class="stat-section">
+          <div class="stat-section-title">🍩 推し別ランキング（${getMonthLabel(dashSelectedMonthKey)}・支出比率）</div>
+          <div class="chart-wrap donut"><canvas id="rankingChart"></canvas></div>
+          <div class="rank-list" id="rankList"></div>
+        </div>
+
+        <div class="stat-section">
+          <div class="stat-section-title">🎤 イベント別 TOP5</div>
+          <div id="eventTopList"></div>
+        </div>
+
+        <div class="stat-section">
+          <div class="stat-section-title">📍 会場別統計</div>
+          <div id="venueTopList"></div>
+        </div>
+
+        <div class="stat-section">
+          <div class="stat-section-title">🏆 累計メモリアル</div>
+          <div class="stat-grid-4" id="cumulativeGrid"></div>
+        </div>
+      `;
+      wrap.innerHTML = html;
+
+      renderMonthlyTrendChart();
+      renderRankingChart(monthRecords);
+      renderTopList('eventTopList', monthRecords, 'eventName', '🎤');
+      renderTopList('venueTopList', monthRecords, 'venue', '📍');
+      renderCumulative();
+    }
+
+    function selectDashMonth(key) { dashSelectedMonthKey = key; renderDashboard(); }
+
+    function getCssVar(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+    function renderMonthlyTrendChart() {
+      const canvas = document.getElementById('monthlyTrendChart');
+      if(!canvas || typeof Chart === 'undefined') return;
+
+      const agg = {};
+      historyList.forEach(v => {
+        const k = getMonthKey(v);
+        if(!agg[k]) agg[k] = { count: 0, amount: 0 };
+        agg[k].count++;
+        agg[k].amount += Number(v.amount) || 0;
+      });
+      const keys = Object.keys(agg).sort().slice(-12);
+
+      if(monthlyChartInstance) monthlyChartInstance.destroy();
+      monthlyChartInstance = new Chart(canvas.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: keys.map(k => getMonthLabel(k).replace('年','/').replace('月','')),
+          datasets: [
+            { label: '支出合計(¥)', data: keys.map(k => agg[k].amount), borderColor: getCssVar('--accent-pink'), backgroundColor: 'transparent', tension: 0.3, yAxisID: 'y' },
+            { label: '撮影枚数', data: keys.map(k => agg[k].count), borderColor: getCssVar('--primary-pink'), backgroundColor: 'transparent', tension: 0.3, yAxisID: 'y1', borderDash: [4,3] }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: getCssVar('--text-color'), font: { size: 10 } } } },
+          scales: {
+            x: { ticks: { color: getCssVar('--light-text'), font: { size: 9 } }, grid: { display: false } },
+            y: { position: 'left', ticks: { color: getCssVar('--light-text'), font: { size: 9 } }, grid: { color: getCssVar('--border-color') } },
+            y1: { position: 'right', ticks: { color: getCssVar('--light-text'), font: { size: 9 } }, grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    function renderRankingChart(monthRecords) {
+      const canvas = document.getElementById('rankingChart');
+      const listEl = document.getElementById('rankList');
+      if(!canvas || typeof Chart === 'undefined') return;
+
+      const byName = {};
+      monthRecords.forEach(v => {
+        if(!byName[v.name]) byName[v.name] = { count: 0, amount: 0 };
+        byName[v.name].count++;
+        byName[v.name].amount += Number(v.amount) || 0;
+      });
+
+      let entries = Object.keys(byName).map(name => ({ name, ...byName[name] }));
+      const totalAmount = entries.reduce((s,e) => s + e.amount, 0);
+      entries.sort((a,b) => b.amount - a.amount || b.count - a.count);
+
+      const colors = [getCssVar('--rank-c1'), getCssVar('--rank-c2'), getCssVar('--rank-c3'), getCssVar('--rank-c4'), getCssVar('--rank-c5')];
+      let top = entries.slice(0, 5);
+      const restAmount = entries.slice(5).reduce((s,e) => s + e.amount, 0);
+      const restCount = entries.slice(5).reduce((s,e) => s + e.count, 0);
+      if(entries.length > 5) top.push({ name: 'その他', amount: restAmount, count: restCount, isOther: true });
+
+      if(rankingChartInstance) rankingChartInstance.destroy();
+
+      if(top.length === 0 || totalAmount === 0) {
+        canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
+        listEl.innerHTML = '<div class="dash-empty">この月は金額の記録がありません</div>';
+        return;
+      }
+
+      rankingChartInstance = new Chart(canvas.getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: top.map(t => t.name),
+          datasets: [{ data: top.map(t => t.amount), backgroundColor: top.map((t,i) => t.isOther ? getCssVar('--rank-cx') : colors[i]), borderColor: getCssVar('--card-bg'), borderWidth: 2 }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, cutout: '68%',
+          plugins: { legend: { display: false } }
+        }
+      });
+
+      listEl.innerHTML = top.map((t,i) => {
+        const pct = totalAmount > 0 ? Math.round((t.amount / totalAmount) * 1000) / 10 : 0;
+        const color = t.isOther ? getCssVar('--rank-cx') : colors[i];
+        return `<div class="rank-row">
+          <span class="rank-dot" style="background:${color};"></span>
+          <span class="rank-name">${t.name}</span>
+          <span class="rank-sub">${t.count}回</span>
+          <span class="rank-pct">${pct}%</span>
+        </div>`;
+      }).join('');
+    }
+
+    function renderTopList(containerId, monthRecords, field, icon) {
+      const el = document.getElementById(containerId);
+      if(!el) return;
+      const agg = {};
+      monthRecords.forEach(v => {
+        const key = (v[field] || '').trim();
+        if(!key) return;
+        if(!agg[key]) agg[key] = { count: 0, amount: 0 };
+        agg[key].count++;
+        agg[key].amount += Number(v.amount) || 0;
+      });
+      const entries = Object.keys(agg).map(k => ({ name: k, ...agg[k] })).sort((a,b) => b.count - a.count || b.amount - a.amount).slice(0, 5);
+
+      if(entries.length === 0) {
+        el.innerHTML = '<div class="dash-empty">この月の記録がありません</div>';
+        return;
+      }
+
+      el.innerHTML = entries.map((e,i) => `
+        <div class="top-list-row">
+          <span class="top-list-rank">#${i+1}</span>
+          <span class="top-list-name">${icon} ${e.name}</span>
+          <span class="top-list-meta">${e.count}回 / ¥${e.amount.toLocaleString()}</span>
+        </div>`).join('');
+    }
+
+    function renderCumulative() {
+      const el = document.getElementById('cumulativeGrid');
+      if(!el) return;
+      const total = historyList.length;
+      const totalAmount = historyList.reduce((s,v) => s + (Number(v.amount)||0), 0);
+
+      let firstDate = null;
+      historyList.forEach(v => {
+        const y = parseInt(v.year,10) || 0, m = parseInt(v.month,10) || 1, d = parseInt(v.day,10) || 1;
+        if(!y) return;
+        const t = y*10000 + m*100 + d;
+        if(firstDate === null || t < firstDate.t) firstDate = { t, label: `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}` };
+      });
+
+      const dayKeys = new Set(historyList.map((v,i) => getUniqueDayKey(v, i)));
+
+      el.innerHTML = `
+        <div class="stat-card"><div class="stat-card-lbl">📷 累計撮影枚数</div><div class="stat-card-val">${total}枚</div></div>
+        <div class="stat-card"><div class="stat-card-lbl">💰 支出総額</div><div class="stat-card-val">¥${totalAmount.toLocaleString()}</div></div>
+        <div class="stat-card"><div class="stat-card-lbl">🎂 初撮影日</div><div class="stat-card-val" style="font-size:0.95rem;">${firstDate ? firstDate.label : '---'}</div></div>
+        <div class="stat-card"><div class="stat-card-lbl">📅 推し活日数</div><div class="stat-card-val">${dayKeys.size}日</div></div>
+      `;
+    }
 
     initUserData();
   </script>
